@@ -1,48 +1,26 @@
-
-
-
 import 'package:autoskola/mvvm/app_routes.dart';
 import 'package:autoskola/mvvm/view_model.abs.dart';
 import 'package:rxdart/subjects.dart';
 
 class HomePageState {
-  final int count;
-  final bool isMinusEnabled;
-  final bool isPlusEnabled;
+  final int carouselPageIndex;
 
-  HomePageState({
-    this.isMinusEnabled = false,
-    this.isPlusEnabled = true,
-    this.count = 0,
-  });
+  HomePageState({this.carouselPageIndex = 0});
 
-  HomePageState copyWith({
-    bool? isMinusEnabled,
-    bool? isPlusEnabled,
-    int? count,
-  }) {
-    return HomePageState(
-      isMinusEnabled: isMinusEnabled ?? this.isMinusEnabled,
-      isPlusEnabled: isPlusEnabled ?? this.isPlusEnabled,
-      count: count ?? this.count,
-    );
+  HomePageState copyWith({int? carouselPageIndex}) {
+    return HomePageState(carouselPageIndex: carouselPageIndex ?? this.carouselPageIndex);
   }
 }
 
 class HomePageViewModel extends ViewModel {
-
   final _stateSubject = BehaviorSubject<HomePageState>.seeded(HomePageState());
   Stream<HomePageState> get state => _stateSubject;
 
   final _routesSubject = PublishSubject<AppRouteSpec>();
   Stream<AppRouteSpec> get routes => _routesSubject;
 
-  void plusButtonTapped() {
-    _updateState(_stateSubject.value.count + 1);
-  }
-
-  void minusButtonTapped() {
-    _updateState(_stateSubject.value.count - 1);
+  void onPageChanged(newCarouselPageIndex) {
+    _updateState(newCarouselPageIndex);
   }
 
   void secondPageButtonTapped() {
@@ -50,21 +28,16 @@ class HomePageViewModel extends ViewModel {
       AppRouteSpec(
         name: '/second',
         arguments: {
-          'count': _stateSubject.value.count,
+          'count': _stateSubject.value.carouselPageIndex,
         },
       ),
     );
   }
 
-  void _updateState(int newCount) {
+  void _updateState(int newCarouselPageIndex) {
     final state = _stateSubject.value;
-    _stateSubject.add(
-      state.copyWith(
-        count: newCount,
-        isPlusEnabled: newCount < 5,
-        isMinusEnabled: newCount > 0,
-      ),
-    );
+    final newState = state.copyWith(carouselPageIndex: newCarouselPageIndex);
+    _stateSubject.add(newState);
   }
 
   @override
