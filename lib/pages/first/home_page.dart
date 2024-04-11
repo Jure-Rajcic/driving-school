@@ -31,7 +31,7 @@ class _HomePageState extends ViewState<HomePage, HomePageViewModel> {
         final state = snapshot.data!;
 
         return Scaffold(
-          backgroundColor: Colors.indigo[50],
+          backgroundColor: Theme.of(context).colorScheme.background,
           appBar: AppBar(
             title: const Text('Home Page'),
           ),

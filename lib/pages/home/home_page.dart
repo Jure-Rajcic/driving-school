@@ -60,11 +60,12 @@ class _HomePageState extends ViewState<HomePage, HomePageViewModel> {
         final state = snapshot.data!;
 
         return Scaffold(
-          backgroundColor: Colors.indigo[50],
+          backgroundColor: Theme.of(context).colorScheme.background,
           appBar: AppBar(
             title: const Text('bla bla'),
           ),
           body: SafeArea(
+            minimum: const EdgeInsets.symmetric(vertical: 20),
             child: Column(
               children: [
                 CarouselSlider(
@@ -78,8 +79,22 @@ class _HomePageState extends ViewState<HomePage, HomePageViewModel> {
                     onPageChanged: (index, _) => viewModel.onPageChanged(index),
                   ),
                 ),
+                const SizedBox(height: 20),
                 Expanded(
-                  child: widget.viewComponents[state.carouselPageIndex],
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        child: widget.viewComponents[state.carouselPageIndex],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
