@@ -1,5 +1,5 @@
 import 'package:autoskola/mvvm/view.abs.dart';
-import 'package:autoskola/pages/home/widgets/medical_examination/medical_examination_vm.dart';
+import 'package:autoskola/pages/home/widgets/psycho_test/psycho_test_vm.dart';
 import 'package:autoskola/ui_components/MyText.dart';
 import 'package:autoskola/ui_components/Sepparator.dart';
 import 'package:autoskola/ui_components/appointment_scheduler/appointment_scheduler.dart';
@@ -7,18 +7,18 @@ import 'package:autoskola/ui_components/appointment_scheduler/appointment_schedu
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide View;
 
-class MedicalExamination extends View<MedicalExaminationViewModel> {
-  const MedicalExamination(
-      {required MedicalExaminationViewModel viewModel, Key? key})
+class PsychoTest extends View<PsychoTestViewModel> {
+  const PsychoTest(
+      {required PsychoTestViewModel viewModel, Key? key})
       : super.model(viewModel, key: key);
 
   @override
-  _MedicalExaminationState createState() => _MedicalExaminationState(viewModel);
+  _PsychoTestState createState() => _PsychoTestState(viewModel);
 }
 
-class _MedicalExaminationState
-    extends ViewState<MedicalExamination, MedicalExaminationViewModel> {
-  _MedicalExaminationState(MedicalExaminationViewModel viewModel)
+class _PsychoTestState
+    extends ViewState<PsychoTest, PsychoTestViewModel> {
+  _PsychoTestState(PsychoTestViewModel viewModel)
       : super(viewModel);
 
   @override
@@ -29,7 +29,7 @@ class _MedicalExaminationState
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<MedicalExaminationState>(
+    return StreamBuilder<PsychoTestState>(
       stream: viewModel.state,
       builder: (context, snapshot) {
         if (!snapshot.hasData) return Container();
@@ -37,7 +37,7 @@ class _MedicalExaminationState
         // final state = snapshot.data!;
 
         return 
-          Column(
+           Column(
             children: [
               const MyText(text: "You are required to undergo a medical examination to confirm your fitness for driving. This includes vision, hearing and general fitness testing."),
               const Sepparator(),
