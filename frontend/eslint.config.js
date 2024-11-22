@@ -1,9 +1,8 @@
+const baseConfig = require("./eslint.base.config.js");
 const nx = require('@nx/eslint-plugin');
 
 module.exports = [
-  ...nx.configs['flat/base'],
-  ...nx.configs['flat/typescript'],
-  ...nx.configs['flat/javascript'],
+...baseConfig,
   {
     ignores: ['**/dist'],
   },
@@ -40,4 +39,12 @@ module.exports = [
     // Override or add rules here
     rules: {},
   },
+{
+    files: ["**/*.json"],
+    rules: { "@nx/dependency-checks": [
+            "error",
+            { ignoredFiles: ["{projectRoot}/eslint.config.{js,cjs,mjs}"] }
+        ] },
+    languageOptions: { parser: require("jsonc-eslint-parser") }
+},
 ];
