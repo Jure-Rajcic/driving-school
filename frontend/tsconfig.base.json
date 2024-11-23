@@ -26,6 +26,39 @@
       ],
       "@spartan-ng/ui-icon-helm": [
         "libs/ui/ui-icon-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-button-helm": [
+        "libs/ui/ui-button-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-sheet-helm": [
+        "libs/ui/ui-sheet-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-input-helm": [
+        "libs/ui/ui-input-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-formfield-helm": [
+        "libs/ui/ui-formfield-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-label-helm": [
+        "libs/ui/ui-label-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-separator-helm": [
+        "libs/ui/ui-separator-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-menu-helm": [
+        "libs/ui/ui-menu-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-tooltip-helm": [
+        "libs/ui/ui-tooltip-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-hovercard-helm": [
+        "libs/ui/ui-hovercard-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-avatar-helm": [
+        "libs/ui/ui-avatar-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-aspectratio-helm": [
+        "libs/ui/ui-aspectratio-helm/src/index.ts"
       ]
     }
   },

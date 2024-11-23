@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
-import { AlertPreviewComponent } from './alert-preview-component';
-import TypographyPreviewComponent from './text-component';
-
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  standalone: true,
-  imports: [AlertPreviewComponent, TypographyPreviewComponent],
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  standalone: true,
+  imports: [RouterOutlet],
+  template: `
+    <router-outlet></router-outlet>
+  `,
 })
 
-
 export class AppComponent {
-  title = 'frontend';
+  title = 'JR-driving-school'
 }
