@@ -18,7 +18,10 @@
     "@angular/platform-browser": "~18.2.0",
     "@angular/platform-browser-dynamic": "~18.2.0",
     "@angular/router": "~18.2.0",
+    "@ng-icons/core": "^25.1.0",
+    "@ng-icons/lucide": "^29.10.0",
     "@spartan-ng/ui-core": "^0.0.1-alpha.356",
+    "class-variance-authority": "^0.6.0",
     "clsx": "^2.1.1",
     "rxjs": "~7.8.0",
     "zone.js": "~0.14.3"

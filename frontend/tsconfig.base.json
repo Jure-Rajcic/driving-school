@@ -20,6 +20,12 @@
     "paths": {
       "@spartan-ng/ui-typography-helm": [
         "libs/ui/ui-typography-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-alert-helm": [
+        "libs/ui/ui-alert-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-icon-helm": [
+        "libs/ui/ui-icon-helm/src/index.ts"
       ]
     }
   },

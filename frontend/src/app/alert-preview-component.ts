@@ -1,19 +1,36 @@
+
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
-import { hlmH1 } from './../../libs/ui/ui-typography-helm/src/lib/hlm-h1.directive';
+import {
+  HlmAlertDescriptionDirective,
+  HlmAlertDirective,
+  HlmAlertIconDirective,
+  HlmAlertTitleDirective,
+} from '@spartan-ng/ui-alert-helm';
+
+import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
+import { provideIcons } from '@ng-icons/core';
+import { lucideBox } from '@ng-icons/lucide';
 
 @Component({
+  selector: 'spartan-alert-preview',
   standalone: true,
-  imports: [NxWelcomeComponent, RouterModule],
-  selector: 'app-root',
-  // templateUrl: './app.component.html',
+  imports: [
+    HlmAlertDirective,
+    HlmAlertDescriptionDirective,
+    HlmAlertIconDirective,
+    HlmAlertTitleDirective,
+    HlmIconComponent,
+  ],
+  providers: [provideIcons({ lucideBox })],
   template: `
-    <h1>The Joke Tax Chronicles</h1> 
-    <h1 class="${hlmH1}">The Joke Tax Chronicles</h1>
+    <div hlmAlert>
+      <hlm-icon hlmAlertIcon name="lucideBox" />
+      <h4 hlmAlertTitle>Introducing spartan/ui!</h4>
+      <p hlmAlertDesc>
+        spartan/ui is made up of unstyled UI providers, the spartan/ui/brain.<br />
+        On top we add spartan/ui/helm(et) with shadcn-like styles.
+      </p>
+    </div>
   `,
-  styleUrl: './app.component.css',
 })
-export class AppComponent {
-  title = 'frontend';
-}
+export class AlertPreviewComponent {}

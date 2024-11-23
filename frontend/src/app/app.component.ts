@@ -1,19 +1,16 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
-import { hlmH1 } from './../../libs/ui/ui-typography-helm/src/lib/hlm-h1.directive';
+import { AlertPreviewComponent } from './alert-preview-component';
+import TypographyPreviewComponent from './text-component';
+
 
 @Component({
   standalone: true,
-  imports: [NxWelcomeComponent, RouterModule],
+  imports: [AlertPreviewComponent, TypographyPreviewComponent],
   selector: 'app-root',
-  // templateUrl: './app.component.html',
-  template: `
-    <h1>The Joke Tax Chronicles</h1> 
-    <h1 class="${hlmH1}">The Joke Tax Chronicles</h1>
-  `,
-  styleUrl: './app.component.css',
+  templateUrl: './app.component.html',
 })
+
+
 export class AppComponent {
   title = 'frontend';
 }
