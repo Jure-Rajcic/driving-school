@@ -59,6 +59,12 @@
       ],
       "@spartan-ng/ui-aspectratio-helm": [
         "libs/ui/ui-aspectratio-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-accordion-helm": [
+        "libs/ui/ui-accordion-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-progress-helm": [
+        "libs/ui/ui-progress-helm/src/index.ts"
       ]
     }
   },
