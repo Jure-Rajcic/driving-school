@@ -1,0 +1,140 @@
+<div class="min-w-screen min-h-screen inset-0 flex flex-row">
+  <hlm-sheet class="fixed h-screen" side="left">
+    <div class=" h-screen w-16 flex flex-col items-center gap-2 bg-background border-r ">
+      <button hlmBtn variant="link" brnSheetTrigger side="left" class="m-2 mt-6">
+        <hlm-avatar variant="medium">
+          <img
+            src="https://imgs.search.brave.com/0ObK8wW8l0X1a9-DNqGFxD1KU8o5Kzw5aFCuUI4Ek0s/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy9j/L2M5L0Fra29yZF9s/b2dvXzk2MHg5NjAu/cG5n"
+            alt="spartan logo. Resembling a spartanic shield" hlmAvatarImage />
+          <span class="bg-[#FD005B] text-white" hlmAvatarFallback>SL</span>
+        </hlm-avatar>
+      </button>
+
+      <button class="aspect-square p-0" hlmBtn variant="outline" brnSheetTrigger side="left">
+        <hlm-icon size='sm' name="lucideLayoutDashboard" />
+      </button>
+      <button class="aspect-square p-0" hlmBtn variant="outline" brnSheetTrigger side="left">
+        <hlm-icon size='sm' name="lucideMousePointerClick" />
+      </button>
+      <button class="aspect-square p-0" hlmBtn variant="outline" brnSheetTrigger side="left">
+        <hlm-icon size='sm' name="lucideUserRoundPlus" />
+      </button>
+      <button class="aspect-square p-0" hlmBtn variant="outline" brnSheetTrigger side="left">
+        <hlm-icon size='sm' name="lucideBookType" />
+      </button>
+      <button class="aspect-square p-0" hlmBtn variant="outline" brnSheetTrigger side="left">
+        <hlm-icon size='sm' name="lucideEye" />
+      </button>
+      <button class="aspect-square p-0" hlmBtn variant="outline" brnSheetTrigger side="left">
+        <hlm-icon size='sm' name="lucideEuro" />
+      </button>
+      <button class="aspect-square p-0" hlmBtn variant="outline" brnSheetTrigger side="left">
+        <hlm-icon size='sm' name="lucideSettings2" />
+      </button>
+    </div>
+
+    <hlm-sheet-content *brnSheetContent="let ctx" class="flex flex-col overflow-y-auto">
+      <hlm-sheet-header class=" flex flex-row">
+        <hlm-avatar variant="large">
+          <img
+            src="https://imgs.search.brave.com/0ObK8wW8l0X1a9-DNqGFxD1KU8o5Kzw5aFCuUI4Ek0s/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy9j/L2M5L0Fra29yZF9s/b2dvXzk2MHg5NjAu/cG5n"
+            alt="spartan logo. Resembling a spartanic shield" hlmAvatarImage />
+          <span class="bg-[#FD005B] text-white" hlmAvatarFallback>SL</span>
+        </hlm-avatar>
+        <div class="flex-1 space-y-1 ml-2 text-start">
+          <h4 class="text-sm font-semibold">&#64;Jure Rajčić</h4>
+          <p class="text-sm text-muted-foreground">Chief Executive Officer</p>
+        </div>
+        <button hlmBtn size="icon" variant="ghost" class=""><hlm-icon size='sm' name="lucideLogOut" /></button>
+      </hlm-sheet-header>
+
+      <div hlmAccordion>
+        <p hlmSheetDescription class="mt-4 px-2">Platform</p>
+        <div hlmAccordionItem>
+          <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2 justify-start">
+            <hlm-icon size="sm" class="mr-2" name="lucideLayoutDashboard" />
+            <p>Dashboard</p>
+          </button>
+        </div>
+        <div hlmAccordionItem>
+          <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2">
+            <hlm-icon size="sm" class="mr-2" name="lucideMousePointerClick" />
+            <p>Form Automation</p>
+            <hlm-icon hlmAccIcon class="ml-auto" />
+          </button>
+          <hlm-accordion-content>
+            <div class="mx-4 border-l px-2">
+              <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2  justify-start">
+                <p>Croatian Car Club</p>
+              </button>
+            </div>
+          </hlm-accordion-content>
+        </div>
+        <div hlmAccordionItem>
+          <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2">
+            <hlm-icon size="sm" class="mr-2" name="lucideUserRoundPlus" />
+            <p>User Management</p>
+            <hlm-icon hlmAccIcon class="ml-auto" />
+          </button>
+          <hlm-accordion-content>
+            <div class="mx-4 border-l px-2">
+              <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2  justify-start">
+                <p>Team</p>
+              </button>
+              <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2  justify-start">
+                <p>Clients</p>
+              </button>
+            </div>
+          </hlm-accordion-content>
+        </div>
+        <div hlmAccordionItem>
+          <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2 justify-start">
+            <hlm-icon size="sm" class="mr-2" name="lucideBookType" />
+            <p>Documentation</p>
+          </button>
+        </div>
+
+
+        <p hlmSheetDescription class="mt-8 px-2">Monitoring</p>
+        <div hlmAccordionItem>
+          <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2  justify-start">
+            <hlm-icon size="sm" class="mr-2" name="lucideEye" />
+            <p>Monitoring</p>
+          </button>
+        </div>
+        <div hlmAccordionItem>
+          <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2  justify-start">
+            <hlm-icon size="sm" class="mr-2" name="lucideEuro" />
+            <p>Transactions</p>
+          </button>
+        </div>
+
+
+        <p hlmSheetDescription class="mt-8 px-2">Appearance</p>
+        <div hlmAccordionItem>
+          <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2">
+            <hlm-icon size="sm" class="mr-2" name="lucideSettings2" />
+            <p>Appearance</p>
+            <hlm-icon hlmAccIcon class="ml-auto" />
+          </button>
+          <hlm-accordion-content>
+            <div class="mx-4 border-l px-2">
+              <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2 justify-start">
+                <hlm-icon size="sm" class="mr-2" name="lucideMoon" />
+                <p>Switch Theme</p>
+              </button>
+              <button hlmAccordionTrigger hlmBtn variant="ghost" class="px-2 justify-start">
+                <hlm-icon size="sm" class="mr-2" name="lucideLanguages" />
+                <p>Switch Language</p>
+              </button>
+            </div>
+          </hlm-accordion-content>
+        </div>
+      </div>
+    </hlm-sheet-content>
+  </hlm-sheet>
+
+  <div class="ml-16 grow">
+    <router-outlet></router-outlet>
+  </div>
+</div>
