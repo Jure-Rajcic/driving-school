@@ -1,1 +1,80 @@
-<p> Home Component</p>
+<div class="w-full max-w-4xl p-4 flex flex-col gap-4 items-center justify-center mx-auto">
+    <h1 class="{{ hlmH1 }}"> {{ models[startingIndex].title }} </h1>
+
+    <div class="w-full flex flex-row gap-4 p-4 ">
+        <hlm-carousel class="w-2/5">
+            <hlm-carousel-content>
+                @for (model of models; track model.id) {
+                <hlm-carousel-item>
+                        <section hlmCard>
+                            <carousel-item-content [model]="model"></carousel-item-content>
+                        </section>
+                </hlm-carousel-item>
+                }
+            </hlm-carousel-content>
+            <!-- <button hlm-carousel-previous></button>
+            <button hlm-carousel-next></button> -->
+        </hlm-carousel>
+        <div class="w-3/5 border flex flex-col gap-2 p-2">
+
+            <p class="{{ hlmP }} text-justify leading-tight">
+                Medical examination to confirm your fitness for driving.
+                This includes vision, hearing and general fitness testing.
+            </p>
+            <button class="flex mt-auto" hlmBtn>
+                <hlm-icon size="sm" class="mr-2" name="lucideCheck" />
+                Unlock next assigment
+            </button>
+        </div>
+        <!-- <div class="size-4 rounded-full bg-gray-200"></div> -->
+        <!-- <button (click)="scrollPrevious()" class="btn-prev">Previous</button>
+        <button (click)="scrollNext()" class="btn-next">Next</button> -->
+    </div>
+
+    <!-- <div class="w-full flex flex-row-reverse gap-4 w-full bg-red-100">
+        <section hlmCard>
+            <div hlmCardHeader>
+                <h3 hlmCardTitle>Notifications</h3>
+                <p hlmCardDescription>You have 3 unread notifications</p>
+            </div>
+            <div hlmCardContent class="grid gap-4">
+                <div class="flex items-center p-4 border border-border space-x-4 rounded-md">
+                    <hlm-icon size="lg" name="lucideBell" />
+                    <div class="flex-1 space-y-1">
+                        <p class="text-sm font-medium leading-none">Push Notifications</p>
+                        <p class="text-sm text-muted-foreground">Send notifications to device.</p>
+                    </div>
+                    <hlm-switch class="ml-4" aria-label="Enable notifications" />
+                </div>
+                <div>
+                    @for (notification of notifications; track notification.id) {
+                    <div class="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                        <span class="flex w-2 h-2 rounded-full translate-y-1 bg-sky-500"></span>
+                        <div class="space-y-1">
+                            <p class="text-sm font-medium leading-none">{{ notification.title }}</p>
+                            <p class="text-sm text-muted-foreground">{{ notification.description }}</p>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div hlmCardFooter class="justify-between">
+                <button class="w-full" hlmBtn>
+                    <hlm-icon size="sm" class="mr-2" name="lucideCheck" />
+                    Mark all as read
+                </button>
+            </div>
+        </section> 
+         <p class="{{ hlmP }} text-justify">
+            After you made your appointment, our driving school will send referral (🖨️) to your occupational medicine
+            (📍) where you will be examined.
+
+            You need to pay 20 euros (💵) on site for Examination.
+
+            Event is automatically added to your in app calendar (📅).
+        </p> -->
+        <!-- <button (click)="scrollPrevious()" class="btn-prev">Previous</button>
+        <button (click)="scrollNext()" class="btn-next">Next</button> 
+    </div>-->
+
+</div>
