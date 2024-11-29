@@ -26,24 +26,22 @@ const LOCKED_DESCRIPTIONS: { [key: number]: DialogIMetaData } = {
     2: { description: 'This screen is becomes unlocked after you complete Medical Examination', mainActionText: 'Take me back' },
     3: { description: 'This screen is becomes unlocked after you pass the Psycho Test', mainActionText: 'Take me back' },
 };
+
 class DialogLocked extends DialogI {
     private readonly appSvgComponent: AppSvgComponent;
+
     constructor(id: number, appSvgComponent: AppSvgComponent) {
         super(LOCKED_DESCRIPTIONS[id]);
         this.appSvgComponent = appSvgComponent;
-        console.log('DialogLocked constructor');
     }
 
     override onInit(): void {
-        console.log('settign filter from color to grayscale');
-        // this.appSvgComponent.setFilter('grayscale(100%)');
+        this.appSvgComponent.setFilter('grayscale(100%)');
     }
 
     override onExit(): void {
-        console.log('settign filter from grayscale to color');
-        // this.appSvgComponent.setFilter('none');
+        this.appSvgComponent.setFilter('none');
     }
-
 }
 
 
@@ -77,7 +75,6 @@ class CarouselItemContentModel {
     readonly svgBaseFileName: string;
     private _state$: BehaviorSubject<CarouselItemContentState>;
 
-
     constructor(id: number, state: CarouselItemContentState) {
         this.id = id;
         this._state$ = new BehaviorSubject(state);
@@ -86,21 +83,16 @@ class CarouselItemContentModel {
         const { title, svgBaseFileName } = CAROUSEL_ITEM_CONTENT[id];
         this.title = title;
         this.svgBaseFileName = svgBaseFileName;
-
-        
     }
 
-    // Expose state as an observable
     get state$() {
         return this._state$.asObservable();
     }
 
-    // Update state
     setState(newState: CarouselItemContentState) {
         this._state$.next(newState);
     }
 
-    // Get current state value
     get state(): CarouselItemContentState {
         return this._state$.getValue();
     }

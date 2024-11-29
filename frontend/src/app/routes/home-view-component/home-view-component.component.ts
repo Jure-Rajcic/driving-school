@@ -78,7 +78,6 @@ export class HomeViewComponentComponent {
   hlmH1 = hlmH1;
   hlmP = hlmP;
   // TODO napravit preko faktorya za svaki scrren dialog, npr onInit za ovaj za info moze setat metadatu, za prodeno za statistiku moze fetcaht podatke i za zakljucano moze greyscalat svg
-  // TODO takoder kad ih se klikne trebaju moci definirat akcije za bottune i te gluposti
   models = [
     new CarouselItemContentModel(1, CarouselItemContentState.DONE),
     new CarouselItemContentModel(2, CarouselItemContentState.WIP),
@@ -87,7 +86,6 @@ export class HomeViewComponentComponent {
 
   startingIndex = 0;
 
-  // Get a reference to the HlmCarouselComponent
   @ViewChild(HlmCarouselComponent) carousel!: HlmCarouselComponent;
 
   ngAfterViewInit() {
@@ -141,5 +139,10 @@ export class HomeViewComponentComponent {
       description: '2 hours ago',
     },
   ];
+
+  handleClick() {
+    console.log('click');
+    this.models[2].setState(CarouselItemContentState.DONE) // updata se ikona i mogu skrolat s gornjim komponentama => imam sve!!!
+  }
 
 }
