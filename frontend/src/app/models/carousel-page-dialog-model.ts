@@ -5,7 +5,7 @@ export type DialogIMetaData = {
     mainActionText: string;
 };
 
-export abstract class DialogI {
+export abstract class CarouselItemDialogModel {
     description: string;
     actionText: string;
 
@@ -20,7 +20,7 @@ export abstract class DialogI {
 }
 
 
-export class DialogLocked extends DialogI {
+export class DialogLocked extends CarouselItemDialogModel {
     private readonly appSvgComponent: AppSvgComponent;
 
     constructor(dialogIMetaData: DialogIMetaData, appSvgComponent: AppSvgComponent) {
@@ -34,24 +34,24 @@ export class DialogLocked extends DialogI {
 
     override onExit(): void {
         this.appSvgComponent.setFilter('none');
-        // update the state in db
-        // save Date time to db when did the user unlocked this screen
+        // TODO update the state in db
+        // TODO save Date time to db when did the user unlocked this screen
     }
 }
 
 
-export class DialogWIP extends DialogI {
+export class DialogWIP extends CarouselItemDialogModel {
     constructor(dialogIMetaData: DialogIMetaData) {
         super(dialogIMetaData);
     }
     
     override onExit(): void {
-        // update the state in db
-        // save Date time to db when did the user completed this screen
+        // TODO update the state in db
+        // TODO save Date time to db when did the user completed this screen
     }
 }
 
-export class DialogDone extends DialogI {
+export class DialogDone extends CarouselItemDialogModel {
     // private readonly StatisticsServiceI: StatisticsServiceI;
 
     constructor(dialogIMetaData: DialogIMetaData, id: number) {
@@ -66,7 +66,8 @@ export class DialogDone extends DialogI {
     }
 
     override onInit(): void {
-        // get the relative statistics from the service
+        // TODO get the relative statistics from the service i mozda setat za dohvatit nove vrijednosti
+        console.log('DialogDone onInit');
         setTimeout(() => {
             this.description = 'You have spent 10 days on this section, in that time you have solved 20 tests and 10 quizzes. Keep up the good work!';
             this.actionText = 'Open my tests';

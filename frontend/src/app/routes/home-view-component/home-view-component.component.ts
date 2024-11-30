@@ -1,13 +1,19 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, model, Type, ViewChild } from '@angular/core';
 import { HlmCarouselComponent, HlmCarouselContentComponent, HlmCarouselItemComponent, HlmCarouselNextComponent, HlmCarouselPreviousComponent } from '@spartan-ng/ui-carousel-helm';
-import { hlmH1, hlmP } from './../../../../libs/ui/ui-typography-helm/src/index';
+import { hlmH1 } from './../../../../libs/ui/ui-typography-helm/src/index';
 import { provideIcons } from '@ng-icons/core';
-import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig,  lucideLockKeyhole } from '@ng-icons/lucide';
+import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole } from '@ng-icons/lucide';
 import { HlmCardDirective } from '@spartan-ng/ui-card-helm';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { CarouselItemContentComponent } from 'src/app/components/carousel-item-content-component';
-import { CarouselItemContentModel, CarouselItemContentState } from 'src/app/models/carousel-item-content-model';
+import { CarouselItemComponent } from 'src/app/components/carousel-page-item-component';
+import { CarouselPageModel, CarouselPageState } from 'src/app/models/carousel-page-model';
+
+import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
+import { DynamicWidgetComponent } from 'src/app/components/carousel-page-dynamic-widget-component';
+import { ParagraphWidgetComponent } from 'src/app/widgets/paragraph-widget';
+import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
+
 @Component({
   standalone: true,
   selector: 'app-root',
@@ -20,36 +26,44 @@ import { CarouselItemContentModel, CarouselItemContentState } from 'src/app/mode
     HlmCardDirective,
     HlmIconComponent,
     HlmButtonDirective,
-    CarouselItemContentComponent,
+    CarouselItemComponent,
+    HlmSwitchComponent,
+    DynamicWidgetComponent,
   ],
   providers: [
-    provideIcons({ lucideCheck, lucideBell, lucideInfo, lucideCircleCheckBig,  lucideLockKeyhole}),
+    provideIcons({ lucideCheck, lucideBell, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole }),
   ],
 
 })
 export class HomeViewComponentComponent {
   hlmH1 = hlmH1;
-  hlmP = hlmP;
-  // TODO napravit preko faktorya za svaki scrren dialog, npr onInit za ovaj za info moze setat metadatu, za prodeno za statistiku moze fetcaht podatke i za zakljucano moze greyscalat svg
-  models = [
-    new CarouselItemContentModel(1, CarouselItemContentState.LOCKED),
-    // new CarouselItemContentModel(2, CarouselItemContentState.WIP),
-    // new CarouselItemContentModel(3, CarouselItemContentState.LOCKED),
-  ];
 
-  startingIndex = 0;
+  protected readonly models: CarouselPageModel[];
+  protected currentModel: CarouselPageModel;
+
+  constructor() {
+    // TODO - fetch data from API
+    this.models = [
+      new CarouselPageModel(1, CarouselPageState.LOCKED),
+      new CarouselPageModel(2, CarouselPageState.WIP),
+      new CarouselPageModel(3, CarouselPageState.DONE),
+    ];
+    let startingIndex = this.models.findIndex((model) => model.state === CarouselPageState.WIP) || this.models.length - 1;
+    this.currentModel = this.models[startingIndex];
+  }
 
   @ViewChild(HlmCarouselComponent) carousel!: HlmCarouselComponent;
 
-  ngAfterViewInit() {
-    // this.startingIndex get from the backend
+  getInputs: Record<string, any> = { content: 'Medical examination to confirm your fitness for driving.' };
 
-    this.scrollTo(this.startingIndex);
+  ngAfterViewInit() {
+
+    this.scrollTo(this.models.indexOf(this.currentModel));
 
     this.carousel.emblaCarousel?.emblaChange.subscribe((_) => {
       const currentIndex = this.carousel.emblaCarousel?.emblaApi?.selectedScrollSnap();
       if (currentIndex !== undefined) {
-        this.startingIndex = currentIndex
+        this.currentModel = this.models[currentIndex];
       }
     });
   }
@@ -70,27 +84,18 @@ export class HomeViewComponentComponent {
     this.carousel.emblaCarousel?.scrollTo(index);
   }
 
-  // protected notifications = [
-  //   {
-  //     id: 1,
-  //     title: 'Your call has been confirmed.',
-  //     description: '1 hour ago',
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'You have a new message!',
-  //     description: '1 hour ago',
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Your subscription is expiring soon!',
-  //     description: '2 hours ago',
-  //   },
-  // ];
 
   handleClick() {
     console.log('click');
-    this.models[0].setState(CarouselItemContentState.WIP) // updata se ikona i mogu skrolat s gornjim komponentama => imam sve!!!
+    // this.models[0].setState(CarouselItemContentState.WIP) // updata se ikona i mogu skrolat s gornjim komponentama => imam sve!!!
+
+    // if (this.startingIndex == 0) {
+    //   this.currentWidget = ParagraphWidgetComponent;
+    //   this.currentWidgetInputs = { content: 'Medical examination to confirm your fitness for driving.' };
+    // } else {
+    //   this.currentWidget = ButtonWidgetComponent;
+    //   this.currentWidgetInputs = { label: 'Click me', action: () => alert('Button clicked!') };
+    // }
   }
 
 }

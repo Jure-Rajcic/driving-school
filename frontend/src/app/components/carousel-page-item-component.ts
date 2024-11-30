@@ -17,16 +17,16 @@ import {
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { Subject, Subscription } from 'rxjs';
-import { CAROUSEL_ITEM_CONTENT, CarouselItemContentModel, CarouselItemContentState } from '../models/carousel-item-content-model';
+import { CAROUSEL_PAGE_CONTENT, CarouselPageModel, CarouselPageState } from '../models/carousel-page-model';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { DialogDone, DialogI, DialogLocked, DialogWIP } from '../models/dialogI';
+import { DialogDone, CarouselItemDialogModel, DialogLocked, DialogWIP } from '../models/carousel-page-dialog-model';
 
 type iconNameT = 'lucideLockKeyhole' | 'lucideInfo' | 'lucideCircleCheckBig';
-type dialogConstructorT = (model: CarouselItemContentModel) => { dialogImple: DialogI; iconName: iconNameT; };
+type dialogConstructorT = (model: CarouselPageModel) => { dialogImple: CarouselItemDialogModel; iconName: iconNameT; };
 
 @Component({
     standalone: true,
-    selector: 'carousel-item-content',
+    selector: 'carousel-page-item',
     imports: [
         CommonModule,
         AppSvgComponent,
@@ -51,8 +51,8 @@ type dialogConstructorT = (model: CarouselItemContentModel) => { dialogImple: Di
     ],
     template: `
         <p hlmCardContent class="aspect-square relative">
-        <app-svg #appSvg [baseFileName]="model.svgBaseFileName"></app-svg>
-        <hlm-alert-dialog>
+            <app-svg #appSvg [baseFileName]="model.svgBaseFileName"></app-svg>
+            <hlm-alert-dialog>
                 <button class="absolute top-2 right-2" hlmBtn [variant]="'ghost'" brnAlertDialogTrigger>
                     <hlm-icon *ngIf="(iconName$ | async) as iconName" size="base" [name]="iconName"></hlm-icon>
                 </button>
@@ -67,36 +67,35 @@ type dialogConstructorT = (model: CarouselItemContentModel) => { dialogImple: Di
                 </hlm-alert-dialog-footer>
                 </hlm-alert-dialog-content>
             </hlm-alert-dialog>
-            </p>
+        </p>
 `,
 })
 
 
-
-export class CarouselItemContentComponent implements OnDestroy, AfterViewInit {
-    @Input() public model!: CarouselItemContentModel;
+export class CarouselItemComponent implements OnDestroy, AfterViewInit {
+    @Input() public model!: CarouselPageModel;
     protected iconName$ = new Subject<iconNameT>();
-    protected dialog: DialogI | null = null;
+    protected dialog: CarouselItemDialogModel | null = null;
     private subscription = new Subscription();
 
-    private dialogConstructors: { [key in CarouselItemContentState]: dialogConstructorT } =
+    private dialogConstructors: { [key in CarouselPageState]: dialogConstructorT } =
         {
-            [CarouselItemContentState.LOCKED]: (model: CarouselItemContentModel) => ({
+            [CarouselPageState.LOCKED]: (model: CarouselPageModel) => ({
                 dialogImple: new DialogLocked(
-                    CAROUSEL_ITEM_CONTENT[model.id].state[CarouselItemContentState.LOCKED],
+                    CAROUSEL_PAGE_CONTENT[model.id].dialogMetaData[CarouselPageState.LOCKED],
                     this.appSvgComponent
                 ),
                 iconName: 'lucideLockKeyhole',
             }),
-            [CarouselItemContentState.WIP]: (model: CarouselItemContentModel) => ({
+            [CarouselPageState.WIP]: (model: CarouselPageModel) => ({
                 dialogImple: new DialogWIP(
-                    CAROUSEL_ITEM_CONTENT[model.id].state[CarouselItemContentState.WIP]
+                    CAROUSEL_PAGE_CONTENT[model.id].dialogMetaData[CarouselPageState.WIP]
                 ),
                 iconName: 'lucideInfo',
             }),
-            [CarouselItemContentState.DONE]: (model: CarouselItemContentModel) => ({
+            [CarouselPageState.DONE]: (model: CarouselPageModel) => ({
                 dialogImple: new DialogDone(
-                    CAROUSEL_ITEM_CONTENT[model.id].state[CarouselItemContentState.DONE],
+                    CAROUSEL_PAGE_CONTENT[model.id].dialogMetaData[CarouselPageState.DONE],
                     model.id
                 ),
                 iconName: 'lucideCircleCheckBig',
