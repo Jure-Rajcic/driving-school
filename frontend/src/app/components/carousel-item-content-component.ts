@@ -16,15 +16,19 @@ import {
     HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { CarouselItemContentModel, CarouselItemContentState, DialogI, DialogLocked, DialogUnlocked } from '../models/carousel-item-content-model';
-import { AsyncPipe } from '@angular/common';
+import { Subject, Subscription } from 'rxjs';
+import { CAROUSEL_ITEM_CONTENT, CarouselItemContentModel, CarouselItemContentState } from '../models/carousel-item-content-model';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { DialogDone, DialogI, DialogLocked, DialogWIP } from '../models/dialogI';
 
+type iconNameT = 'lucideLockKeyhole' | 'lucideInfo' | 'lucideCircleCheckBig';
+type dialogConstructorT = (model: CarouselItemContentModel) => { dialogImple: DialogI; iconName: iconNameT; };
 
 @Component({
     standalone: true,
     selector: 'carousel-item-content',
     imports: [
+        CommonModule,
         AppSvgComponent,
         HlmButtonDirective,
         HlmCardContentDirective,
@@ -50,7 +54,7 @@ import { AsyncPipe } from '@angular/common';
         <app-svg #appSvg [baseFileName]="model.svgBaseFileName"></app-svg>
         <hlm-alert-dialog>
                 <button class="absolute top-2 right-2" hlmBtn [variant]="'ghost'" brnAlertDialogTrigger>
-                <hlm-icon size="base" [name]="(iconName$ | async) ?? '' "></hlm-icon>
+                    <hlm-icon *ngIf="(iconName$ | async) as iconName" size="base" [name]="iconName"></hlm-icon>
                 </button>
                 <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
                 <hlm-alert-dialog-header>
@@ -59,7 +63,7 @@ import { AsyncPipe } from '@angular/common';
                 </hlm-alert-dialog-header>
                 <hlm-alert-dialog-footer>
                     <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-                    <button hlmAlertDialogAction (click)="dialog?.mainActionClick(); ctx.close()">Platform Demo</button>
+                    <button hlmAlertDialogAction (click)="dialog?.onMainActionClick(); ctx.close()">Platform Demo</button>
                 </hlm-alert-dialog-footer>
                 </hlm-alert-dialog-content>
             </hlm-alert-dialog>
@@ -67,25 +71,39 @@ import { AsyncPipe } from '@angular/common';
 `,
 })
 
-export class CarouselItemContentComponent implements OnDestroy, AfterViewInit {
-    @Input() public model!: CarouselItemContentModel; 
-    protected iconName$ = new BehaviorSubject<string>(''); 
-    protected dialog: DialogI | null = null;
 
+
+export class CarouselItemContentComponent implements OnDestroy, AfterViewInit {
+    @Input() public model!: CarouselItemContentModel;
+    protected iconName$ = new Subject<iconNameT>();
+    protected dialog: DialogI | null = null;
     private subscription = new Subscription();
-    private iconNames = {
-        [CarouselItemContentState.LOCKED]: 'lucideLockKeyhole',
-        [CarouselItemContentState.WIP]: 'lucideInfo',
-        [CarouselItemContentState.DONE]: 'lucideCircleCheckBig',
-    };
-    private dialogConstructors = {
-        [CarouselItemContentState.LOCKED]: (model: CarouselItemContentModel) => new DialogLocked(model.id, this.appSvgComponent),
-        [CarouselItemContentState.WIP]: (model: CarouselItemContentModel) => new DialogUnlocked(model.id),
-        [CarouselItemContentState.DONE]: (model: CarouselItemContentModel) => new DialogUnlocked(model.id),
-    };
+
+    private dialogConstructors: { [key in CarouselItemContentState]: dialogConstructorT } =
+        {
+            [CarouselItemContentState.LOCKED]: (model: CarouselItemContentModel) => ({
+                dialogImple: new DialogLocked(
+                    CAROUSEL_ITEM_CONTENT[model.id].state[CarouselItemContentState.LOCKED],
+                    this.appSvgComponent
+                ),
+                iconName: 'lucideLockKeyhole',
+            }),
+            [CarouselItemContentState.WIP]: (model: CarouselItemContentModel) => ({
+                dialogImple: new DialogWIP(
+                    CAROUSEL_ITEM_CONTENT[model.id].state[CarouselItemContentState.WIP]
+                ),
+                iconName: 'lucideInfo',
+            }),
+            [CarouselItemContentState.DONE]: (model: CarouselItemContentModel) => ({
+                dialogImple: new DialogDone(
+                    CAROUSEL_ITEM_CONTENT[model.id].state[CarouselItemContentState.DONE],
+                    model.id
+                ),
+                iconName: 'lucideCircleCheckBig',
+            }),
+        };
 
     @ViewChild('appSvg') appSvgComponent!: AppSvgComponent;
-
     ngAfterViewInit() {
         this.handleStateChange();
     }
@@ -100,12 +118,13 @@ export class CarouselItemContentComponent implements OnDestroy, AfterViewInit {
         if (this.model) {
             this.subscription.add(
                 this.model.state$.subscribe(state => {
-                    this.iconName$.next(this.iconNames[state]);
-                    if (this.dialog) {
-                        this.dialog.onExit();
-                    }
-                    this.dialog = this.dialogConstructors[state](this.model);
-                    this.dialog.onInit();
+                    if (this.dialog) this.dialog.onExit();
+                    let { dialogImple, iconName } = this.dialogConstructors[state](this.model);
+                    setTimeout(() => {
+                        this.iconName$.next(iconName);
+                        this.dialog = dialogImple;
+                        this.dialog.onInit();
+                    });
                 })
             );
         }

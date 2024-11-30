@@ -61,7 +61,7 @@ export class AppSvgComponent implements OnInit, OnDestroy {
             this.observer = new MutationObserver(() => {
                 const svgElement = hostElement.querySelector('svg');
                 if (svgElement) {
-                    console.log('SVG element is now available');
+                    // console.log('SVG element is now available');
                     this.setFilter(this.currentFilter || 'none');
                     this.observer?.disconnect();
                 }
@@ -78,10 +78,10 @@ export class AppSvgComponent implements OnInit, OnDestroy {
         const svgElement = hostElement.querySelector('svg');
 
         if (svgElement) {
-            console.log('Applying filter:', filter);
+            // console.log('Applying filter:', filter);
             this.renderer.setStyle(svgElement, 'filter', filter);
         } else {
-            console.warn('SVG element not found yet; storing filter for later application');
+            // console.warn('SVG element not found yet; storing filter for later application');
             this.currentFilter = filter;
         }
     }
