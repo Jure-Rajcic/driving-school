@@ -19,10 +19,9 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { Subject, Subscription } from 'rxjs';
 import { CAROUSEL_PAGE_CONTENT, CarouselPageModel, CarouselPageState } from '../models/carousel-page-model';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { DialogDone, CarouselItemDialogModel, DialogLocked, DialogWIP } from '../models/carousel-page-dialog-model';
+import { DialogDoneModel, CarouselPageItemDialogModel, DialogLockedModel, DialogWorkInProgressModel } from '../models/carousel-page-item-dialog-model';
 
-type iconNameT = 'lucideLockKeyhole' | 'lucideInfo' | 'lucideCircleCheckBig';
-type dialogConstructorT = (model: CarouselPageModel) => { dialogImple: CarouselItemDialogModel; iconName: iconNameT; };
+
 
 @Component({
     standalone: true,
@@ -59,7 +58,7 @@ type dialogConstructorT = (model: CarouselPageModel) => { dialogImple: CarouselI
                 <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
                 <hlm-alert-dialog-header>
                     <h3 hlmAlertDialogTitle>{{model.title}}</h3>
-                    <p hlmAlertDialogDescription>{{ dialog?.description }}</p>
+                    <p hlmAlertDialogDescription>{{ dialog?.metaData?.description }}</p>
                 </hlm-alert-dialog-header>
                 <hlm-alert-dialog-footer>
                     <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
@@ -73,39 +72,19 @@ type dialogConstructorT = (model: CarouselPageModel) => { dialogImple: CarouselI
 
 
 export class CarouselPageItemComponent implements OnDestroy, AfterViewInit {
-    @Input() public model!: CarouselPageModel;
-    protected iconName$ = new Subject<iconNameT>();
-    protected dialog: CarouselItemDialogModel | null = null;
+    @Input()
+    public model!: CarouselPageModel;
+    protected iconName$ = new Subject<string>();
+    protected dialog: CarouselPageItemDialogModel | null = null;
     private subscription = new Subscription();
 
-    private dialogConstructors: { [key in CarouselPageState]: dialogConstructorT } =
-        {
-            [CarouselPageState.LOCKED]: (model: CarouselPageModel) => ({
-                dialogImple: new DialogLocked(
-                    CAROUSEL_PAGE_CONTENT[model.id].dialogMetaData[CarouselPageState.LOCKED],
-                    this.appSvgComponent
-                ),
-                iconName: 'lucideLockKeyhole',
-            }),
-            [CarouselPageState.WIP]: (model: CarouselPageModel) => ({
-                dialogImple: new DialogWIP(
-                    CAROUSEL_PAGE_CONTENT[model.id].dialogMetaData[CarouselPageState.WIP]
-                ),
-                iconName: 'lucideInfo',
-            }),
-            [CarouselPageState.DONE]: (model: CarouselPageModel) => ({
-                dialogImple: new DialogDone(
-                    CAROUSEL_PAGE_CONTENT[model.id].dialogMetaData[CarouselPageState.DONE],
-                    model.id
-                ),
-                iconName: 'lucideCircleCheckBig',
-            }),
-        };
 
-    @ViewChild('appSvg') appSvgComponent!: AppSvgComponent;
     ngAfterViewInit() {
         this.handleStateChange();
     }
+
+    @ViewChild('appSvg')
+    appSvgComponent!: AppSvgComponent;
 
     ngOnChanges() {
         if (this.appSvgComponent) {
@@ -114,20 +93,40 @@ export class CarouselPageItemComponent implements OnDestroy, AfterViewInit {
     }
 
     private handleStateChange() {
-        if (this.model) {
-            this.subscription.add(
-                this.model.state$.subscribe(state => {
-                    if (this.dialog) this.dialog.onExit();
-                    let { dialogImple, iconName } = this.dialogConstructors[state](this.model);
-                    setTimeout(() => {
-                        this.iconName$.next(iconName);
-                        this.dialog = dialogImple;
-                        this.dialog.onInit();
-                    });
-                })
-            );
-        }
+        if (!this.model) return;
+
+        this.subscription.add(
+            this.model.state$.subscribe(state => {
+
+                if (this.dialog) this.dialog.onExit();
+               
+                let dialogImple, iconName;
+                switch (state) {
+                    case CarouselPageState.LOCKED:
+                        dialogImple = this.model.dialogBox.dialogs[CarouselPageState.LOCKED].setProperty('appSvgComponent', this.appSvgComponent);
+                        iconName = 'lucideLockKeyhole';
+                        break;
+                    case CarouselPageState.WIP:
+                        dialogImple = this.model.dialogBox.dialogs[CarouselPageState.WIP];
+                        iconName = 'lucideInfo';
+                        break;
+                    case CarouselPageState.DONE:
+                        dialogImple = this.model.dialogBox.dialogs[CarouselPageState.DONE];
+                        iconName = 'lucideCircleCheckBig';
+                        break;
+                    default:
+                        throw new Error('Unsupported state');
+                }
+
+                setTimeout(() => {
+                    this.iconName$.next(iconName);
+                    this.dialog = dialogImple;
+                    this.dialog.onInit();
+                });
+            })
+        );
     }
+    
 
     ngOnDestroy() {
         this.subscription.unsubscribe();

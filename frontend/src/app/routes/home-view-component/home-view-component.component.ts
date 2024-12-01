@@ -88,7 +88,7 @@ export class HomeViewComponentComponent {
 
   handleClick() {
     console.log('click');
-    // this.models[0].setState(CarouselItemContentState.WIP) // updata se ikona i mogu skrolat s gornjim komponentama => imam sve!!!
+    this.models[0].setState(CarouselPageState.LOCKED)// updata se ikona i mogu skrolat s gornjim komponentama => imam sve!!!
 
     // if (this.startingIndex == 0) {
     //   this.currentWidget = ParagraphWidgetComponent;
