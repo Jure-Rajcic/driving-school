@@ -3,6 +3,7 @@ import { DialogIMetaData } from './carousel-page-dialog-model';
 import { ParagraphWidgetComponent } from '../widgets/paragraph-widget';
 import { ButtonWidgetComponent } from '../widgets/button-widget';
 import { Type } from '@angular/core';
+import { WidgetFactoryComponent } from '../widgets/widget-factort-1';
 
 enum CarouselPageState { LOCKED, WIP, DONE }
 
@@ -37,7 +38,7 @@ const CAROUSEL_PAGE_CONTENT: { [key: number]: CarouselPageType }= {
             } 
         },
         widgetMetaData: {
-            widget: ParagraphWidgetComponent,
+            widget: WidgetFactoryComponent,
             inputs: { content: 'Medical examination to confirm your fitness for driving.' }
         }
     },

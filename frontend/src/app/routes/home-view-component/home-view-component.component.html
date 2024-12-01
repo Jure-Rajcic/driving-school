@@ -14,7 +14,6 @@
             </hlm-carousel-content>
         </hlm-carousel>
         <div class="w-3/5 border flex flex-col gap-2 p-2">
-            <carousel-page-dynamic-widget [componentType]="currentModel.widgetMetaData.widget" [inputs]="currentModel.widgetMetaData.inputs"></carousel-page-dynamic-widget>
             <button class="flex mt-auto" hlmBtn (click)="handleClick()">
                 <hlm-icon size="sm" class="mr-2" name="lucideCheck" />
                 Unlock next assigment
@@ -22,6 +21,13 @@
         </div>
     </div>
 
-  
+    <div class="w-full flex flex-row gap-4 p-4 ">
+        <carousel-page-dynamic-widget 
+            class="w-full"
+            [componentType]="currentModel.widgetMetaData.widget"
+            [inputs]="currentModel.widgetMetaData.inputs">
+        </carousel-page-dynamic-widget>
+    </div>
+
 
 </div>

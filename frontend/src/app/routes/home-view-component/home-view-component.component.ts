@@ -44,12 +44,12 @@ export class HomeViewComponentComponent {
   constructor() {
     // TODO - fetch data from API
     this.models = [
-      new CarouselPageModel(1, CarouselPageState.LOCKED),
-      new CarouselPageModel(2, CarouselPageState.WIP),
-      new CarouselPageModel(3, CarouselPageState.DONE),
+      new CarouselPageModel(1, CarouselPageState.WIP),
+      new CarouselPageModel(2, CarouselPageState.LOCKED),
+      new CarouselPageModel(3, CarouselPageState.WIP),
     ];
-    let startingIndex = this.models.findIndex((model) => model.state === CarouselPageState.WIP) || this.models.length - 1;
-    this.currentModel = this.models[startingIndex];
+    // let startingIndex = this.models.findIndex((model) => model.state === CarouselPageState.WIP) || this.models.length - 1;
+    this.currentModel = this.models[0];
   }
 
   @ViewChild(HlmCarouselComponent) carousel!: HlmCarouselComponent;

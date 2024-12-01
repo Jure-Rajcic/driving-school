@@ -77,6 +77,18 @@
       ],
       "@spartan-ng/ui-alertdialog-helm": [
         "libs/ui/ui-alertdialog-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-table-helm": [
+        "libs/ui/ui-table-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-checkbox-helm": [
+        "libs/ui/ui-checkbox-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-select-helm": [
+        "libs/ui/ui-select-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-sonner-helm": [
+        "libs/ui/ui-sonner-helm/src/index.ts"
       ]
     }
   },
