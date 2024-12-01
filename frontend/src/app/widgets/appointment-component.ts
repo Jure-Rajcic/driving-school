@@ -150,7 +150,7 @@ import { MedicalExaminationWidgetType } from '../services/widget-service';
     </div>
   `,
 })
-export class DataTablePreviewComponent {
+export class AppointmentComponent {
   @Input() set data(newData: MedicalExaminationWidgetType[]) {
     if (newData && Array.isArray(newData)) {
       // Merge new data with the existing data and sort
@@ -269,5 +269,9 @@ export class DataTablePreviewComponent {
         onClick: () => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(element.location)}`, '_blank'),
       },
     });
+  }
+
+  getSelectedAppointments(): MedicalExaminationWidgetType[] {
+    return this._selected();
   }
 }
