@@ -2,15 +2,15 @@ import { Component, Input, ViewChild, ViewContainerRef, Type, OnChanges, SimpleC
 
 @Component({
   standalone: true,
-  selector: 'carousel-page-dynamic-widget',
-  template: `<ng-container #widgetContainer></ng-container>`,
+  selector: 'carousel-page-content',
+  template: `<ng-container #contentContainer></ng-container>`,
 })
-export class DynamicWidgetComponent implements OnChanges {
+export class CarouselPageContentComponent implements OnChanges {
   @Input() componentType!: Type<any>; // Pass the component type to render dynamically
   @Input() inputs: Record<string, any> = {}; // Inputs for the dynamic component
 
-  @ViewChild('widgetContainer', { read: ViewContainerRef, static: true })
-  widgetContainer!: ViewContainerRef;
+  @ViewChild('contentContainer', { read: ViewContainerRef, static: true })
+  contentContainer!: ViewContainerRef;
 
   ngOnChanges(changes: SimpleChanges): void {
     // Use bracket notation for property access
@@ -23,10 +23,10 @@ export class DynamicWidgetComponent implements OnChanges {
     if (!this.componentType) return;
 
     // Clear the container before rendering the new component
-    this.widgetContainer.clear();
+    this.contentContainer.clear();
 
     // Create the component dynamically
-    const componentRef = this.widgetContainer.createComponent(this.componentType);
+    const componentRef = this.contentContainer.createComponent(this.componentType);
 
     // Pass inputs dynamically
     Object.entries(this.inputs).forEach(([key, value]) => {

@@ -6,13 +6,14 @@ import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig, lucideLockKe
 import { HlmCardDirective } from '@spartan-ng/ui-card-helm';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { CarouselItemComponent } from 'src/app/components/carousel-page-item-component';
+import { CarouselPageItemComponent } from 'src/app/components/carousel-page-item-component';
 import { CarouselPageModel, CarouselPageState } from 'src/app/models/carousel-page-model';
 
 import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
-import { DynamicWidgetComponent } from 'src/app/components/carousel-page-dynamic-widget-component';
+import { CarouselPageContentComponent } from 'src/app/components/carousel-page-content-component';
 import { ParagraphWidgetComponent } from 'src/app/widgets/paragraph-widget';
 import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
+import { CarouselPageResultComponent } from 'src/app/components/carousel-page-result-component';
 
 @Component({
   standalone: true,
@@ -26,9 +27,9 @@ import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
     HlmCardDirective,
     HlmIconComponent,
     HlmButtonDirective,
-    CarouselItemComponent,
-    HlmSwitchComponent,
-    DynamicWidgetComponent,
+    CarouselPageItemComponent,
+    CarouselPageContentComponent,
+    CarouselPageResultComponent,
   ],
   providers: [
     provideIcons({ lucideCheck, lucideBell, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole }),

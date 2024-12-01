@@ -72,7 +72,7 @@ type dialogConstructorT = (model: CarouselPageModel) => { dialogImple: CarouselI
 })
 
 
-export class CarouselItemComponent implements OnDestroy, AfterViewInit {
+export class CarouselPageItemComponent implements OnDestroy, AfterViewInit {
     @Input() public model!: CarouselPageModel;
     protected iconName$ = new Subject<iconNameT>();
     protected dialog: CarouselItemDialogModel | null = null;

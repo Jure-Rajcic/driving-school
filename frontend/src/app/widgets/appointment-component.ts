@@ -261,8 +261,6 @@ export class DataTablePreviewComponent {
     }
   }
 
-  
-
   showToast(element: MedicalExaminationWidgetType) {
     toast('Location Copied', {
       description: `Do you need directions?`,
