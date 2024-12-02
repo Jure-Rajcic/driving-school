@@ -150,6 +150,7 @@ import { MedicalExaminationWidgetType } from '../services/widget-service';
     </div>
   `,
 })
+// TODO refactor this component to be generalizide for apointments
 export class AppointmentComponent {
   @Input() set data(newData: MedicalExaminationWidgetType[]) {
     if (newData && Array.isArray(newData)) {
@@ -192,7 +193,7 @@ export class AppointmentComponent {
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
   private readonly _selectionModel = new SelectionModel<MedicalExaminationWidgetType>(true);
-  protected readonly _isPaymentSelected = (payment: MedicalExaminationWidgetType) => this._selectionModel.isSelected(payment);
+  protected readonly _isPaymentSelected = (row: MedicalExaminationWidgetType) => this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(this._selectionModel.changed.pipe(map((change) => change.source.selected)), {
     initialValue: [],
   });
@@ -230,7 +231,7 @@ export class AppointmentComponent {
       .slice(start, end);
   });
   protected readonly _allFilteredPaginatedDataSelected = computed(() =>
-    this._filteredSortedPaginatedData().every((payment) => this._selected().includes(payment)),
+    this._filteredSortedPaginatedData().every((row) => this._selected().includes(row)),
   );
   protected readonly _checkboxState = computed(() => {
     const noneSelected = this._selected().length === 0;
@@ -248,8 +249,8 @@ export class AppointmentComponent {
     effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), { allowSignalWrites: true });
   }
 
-  protected togglePayment(payment: MedicalExaminationWidgetType) {
-    this._selectionModel.toggle(payment);
+  protected togglePayment(row: MedicalExaminationWidgetType) {
+    this._selectionModel.toggle(row);
   }
 
   protected handleHeaderCheckboxChange() {

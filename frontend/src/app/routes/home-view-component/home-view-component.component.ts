@@ -1,18 +1,13 @@
 import { Component, inject, model, Type, ViewChild } from '@angular/core';
-import { HlmCarouselComponent, HlmCarouselContentComponent, HlmCarouselItemComponent, HlmCarouselNextComponent, HlmCarouselPreviousComponent } from '@spartan-ng/ui-carousel-helm';
+import { HlmCarouselComponent, HlmCarouselContentComponent, HlmCarouselItemComponent } from '@spartan-ng/ui-carousel-helm';
 import { hlmH1 } from './../../../../libs/ui/ui-typography-helm/src/index';
 import { provideIcons } from '@ng-icons/core';
 import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole } from '@ng-icons/lucide';
 import { HlmCardDirective } from '@spartan-ng/ui-card-helm';
-import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
-import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { CarouselPageItemComponent } from 'src/app/components/carousel-page-item-component';
 import { CarouselPageModel, CarouselPageState } from 'src/app/models/carousel-page-model';
 
-import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
 import { CarouselPageContentComponent } from 'src/app/components/carousel-page-content-component';
-import { ParagraphWidgetComponent } from 'src/app/widgets/paragraph-widget';
-import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
 import { CarouselPageResultComponent } from 'src/app/components/carousel-page-result-component';
 
 @Component({
@@ -23,10 +18,7 @@ import { CarouselPageResultComponent } from 'src/app/components/carousel-page-re
     HlmCarouselComponent,
     HlmCarouselContentComponent,
     HlmCarouselItemComponent,
-    HlmButtonDirective,
     HlmCardDirective,
-    HlmIconComponent,
-    HlmButtonDirective,
     CarouselPageItemComponent,
     CarouselPageContentComponent,
     CarouselPageResultComponent,
@@ -47,7 +39,7 @@ export class HomeViewComponentComponent {
     this.models = [
       new CarouselPageModel(1, CarouselPageState.WIP),
       new CarouselPageModel(2, CarouselPageState.LOCKED),
-      new CarouselPageModel(3, CarouselPageState.WIP),
+      // new CarouselPageModel(3, CarouselPageState.WIP),
     ];
     // let startingIndex = this.models.findIndex((model) => model.state === CarouselPageState.WIP) || this.models.length - 1;
     this.currentModel = this.models[0];
@@ -85,18 +77,18 @@ export class HomeViewComponentComponent {
     this.carousel.emblaCarousel?.scrollTo(index);
   }
 
+  // TODO iskorisitti za promjenu sata preko childa da emita event
+  // handleClick() {
+  //   console.log('click');
+  //   this.models[0].setState(CarouselPageState.LOCKED)// updata se ikona i mogu skrolat s gornjim komponentama => imam sve!!!
 
-  handleClick() {
-    console.log('click');
-    this.models[0].setState(CarouselPageState.LOCKED)// updata se ikona i mogu skrolat s gornjim komponentama => imam sve!!!
-
-    // if (this.startingIndex == 0) {
-    //   this.currentWidget = ParagraphWidgetComponent;
-    //   this.currentWidgetInputs = { content: 'Medical examination to confirm your fitness for driving.' };
-    // } else {
-    //   this.currentWidget = ButtonWidgetComponent;
-    //   this.currentWidgetInputs = { label: 'Click me', action: () => alert('Button clicked!') };
-    // }
-  }
+  //   // if (this.startingIndex == 0) {
+  //   //   this.currentWidget = ParagraphWidgetComponent;
+  //   //   this.currentWidgetInputs = { content: 'Medical examination to confirm your fitness for driving.' };
+  //   // } else {
+  //   //   this.currentWidget = ButtonWidgetComponent;
+  //   //   this.currentWidgetInputs = { label: 'Click me', action: () => alert('Button clicked!') };
+  //   // }
+  // }
 
 }

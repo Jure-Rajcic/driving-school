@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+// TODO rename this type to something more meaningful
 export type MedicalExaminationWidgetType = {
   date: string;
   time: string;
@@ -15,7 +16,6 @@ export class WidgetService {
   private loadingSubject = new BehaviorSubject<boolean>(true);
 
   widgetData$: Observable<MedicalExaminationWidgetType[]> = this.widgetDataSubject.asObservable();
-  loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
   constructor() {
     // TODO: Fetch data from the server && listen for real-time updates
@@ -31,7 +31,6 @@ export class WidgetService {
         { date: '2024-12-01', time: '2:00 PM', location: 'Clinic B' },
       ];
       this.widgetDataSubject.next(initialData);
-      this.loadingSubject.next(false); // Emit loading completion
     }, 2000); // Simulate a 1-second API call
   }
 

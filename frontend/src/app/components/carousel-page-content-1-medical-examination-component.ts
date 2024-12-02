@@ -15,7 +15,9 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
       <h3 class="${hlmH3} ">Schedule Your Medical Examination</h3>
       <ul class="${hlmUl}">
         <li>Select at least 3 appointments that you coluld attend.</li>
-        <li>Upon selection please click the "Request" button so that our team can confirm the appointment.</li>
+        <li>Upon selection please click the "Request" button below so that our team can confirm the appointment.</li>
+        <li>Our team will reach out in max 48 hours to confirm your appointment.</li>
+        <li>After you attend the appointment, our team will unlock the next assignment for you.</li>
       </ul>
       <appointment-component #appointmentComponent [data]="(widgetData$ | async) ?? []"></appointment-component>
       <button class="w-full mt-8" hlmBtn (click)="requestAppointment()">Request</button>
@@ -28,6 +30,7 @@ export class MedicalExaminationContentComponent  {
   appointmentComponent!: AppointmentComponent;
 
   requestAppointment() {
+    // TODO open dialog and edit upper text
     if (!this.appointmentComponent) return;
     const selectedAppointments = this.appointmentComponent.getSelectedAppointments();
     console.log('Selected Appointments:', selectedAppointments);

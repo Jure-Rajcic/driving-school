@@ -14,14 +14,9 @@
             </hlm-carousel-content>
         </hlm-carousel>
         <div class="w-3/5 border flex flex-col gap-2 p-2">
-            <!-- <carousel-page-result class="w-full"
-                [componentType]="currentModel.widgetMetaData.widget"
-                [inputs]="currentModel.widgetMetaData.inputs">
-            </carousel-page-result> -->
-            <button class="flex mt-auto" hlmBtn (click)="handleClick()">
-                <hlm-icon size="sm" class="mr-2" name="lucideCheck" />
-                Unlock next assigment
-            </button>
+            <carousel-page-result class="w-full h-full"
+                [componentType]="currentModel.resultComponent">
+            </carousel-page-result>
         </div>
     </div>
 
