@@ -51,6 +51,7 @@ import {
 } from '@spartan-ng/ui-popover-brain';
 import { AppointmentComponent } from "src/app/components/admin/appointment-component";
 import { hlmH1 } from "@spartan-ng/ui-typography-helm";
+import { MedicalExaminationAdminService } from "src/app/services/1-medical-examination-admin";
 
 type Clinic = { label: string; value: string }
 
@@ -94,6 +95,25 @@ type Clinic = { label: string; value: string }
 
     HlmButtonDirective,
     AppointmentComponent,
+    BrnCommandImports,
+    HlmCommandImports,
+    HlmIconComponent,
+    BrnPopoverComponent,
+    BrnPopoverTriggerDirective,
+    BrnPopoverContentDirective,
+    HlmPopoverContentDirective,
+    HlmCardDirective,
+    HlmCardHeaderDirective,
+    HlmCardTitleDirective,
+    HlmCardDescriptionDirective,
+    HlmCardContentDirective,
+    HlmLabelDirective,
+    HlmInputDirective,
+    HlmCardFooterDirective,
+    HlmButtonDirective,
+    HlmAlertDialogContentComponent,
+    HlmAlertDialogHeaderComponent,
+    HlmAlertDialogFooterComponent,
   
   ],
     providers: [provideIcons({ lucidePlus, lucideCheck, lucideChevronDown })],
@@ -102,8 +122,12 @@ type Clinic = { label: string; value: string }
 export class MonitoringViewMedicalExaminationComponent {
 
   hlmH1 = hlmH1;
+  widgetService = inject(WidgetService);
+  adminService = inject(MedicalExaminationAdminService);
+  
+  widgetData$: Observable<MedicalExaminationWidgetType[]> = this.widgetService.widgetData$;
+  appointments = this.adminService.appointments;
 
-  widgetData$: Observable<MedicalExaminationWidgetType[]> = inject(WidgetService).widgetData$;
   public clinics = [
     {
       label: 'Clinic 1',
@@ -133,5 +157,10 @@ export class MonitoringViewMedicalExaminationComponent {
     } else {
       this.currentClinic.set(framework);
     }
+  }
+
+
+  createDemoAppointment() {
+    this.adminService.simulateRequest();
   }
 }

@@ -1,1 +1,5 @@
-export * from './dtos/carousel-page-1-medical-examination.dto';
+export * from './dtos/medical-examination.dto';
+//# sourceMappingURL=index.ts.map
+
+export * from './dtos/identify.dto';
+//# sourceMappingURL=index.ts.map

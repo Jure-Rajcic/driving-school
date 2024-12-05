@@ -18,7 +18,7 @@ import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
 import { CarouselPageResultComponent } from 'src/app/components/carousel-page-result-component';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { hlmH1, hlmP } from '../../../libs/ui/ui-typography-helm/src/index';
-import { MedicalExaminationService } from "../services/carousel-page-service-1-medical-examination";
+import { MedicalExaminationUserService } from "../services/1-medical-examination-user";
 
 @Component({
   selector: 'medical-examination-result',
@@ -61,7 +61,7 @@ import { MedicalExaminationService } from "../services/carousel-page-service-1-m
 //TODO refactor to use realtime data to update the view
 export class MedicalExaminationResultComponent {
 
-  service = inject(MedicalExaminationService);
+  service = inject(MedicalExaminationUserService);
 
   handleClick() {
     console.log('simulateRequest');

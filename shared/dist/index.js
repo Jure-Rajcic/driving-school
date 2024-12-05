@@ -14,4 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./dtos/carousel-page-1-medical-examination.dto"), exports);
+__exportStar(require("./dtos/medical-examination.dto"), exports);
+//# sourceMappingURL=index.ts.map
+__exportStar(require("./dtos/identify.dto"), exports);
+//# sourceMappingURL=index.ts.map

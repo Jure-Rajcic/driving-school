@@ -19,7 +19,7 @@ export class WidgetService {
 
   constructor() {
     // TODO: Fetch data from the server && listen for real-time updates
-    this.initializeData();
+    // this.initializeData();
     // this.simulateSocketUpdates();
   }
 

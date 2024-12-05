@@ -1,0 +1,1 @@
+{"version":3,"file":"identify.dto.d.ts","sourceRoot":"","sources":["../../src/dtos/identify.dto.ts"],"names":[],"mappings":"AACA,eAAO,MAAM,QAAQ,aAAa,CAAC;AAEnC,MAAM,MAAM,IAAI,GAAG,OAAO,GAAG,MAAM,CAAC;AACpC,MAAM,WAAW,WAAW;IACxB,EAAE,EAAE,MAAM,CAAC;IACX,IAAI,EAAE,IAAI,CAAC;CACd"}

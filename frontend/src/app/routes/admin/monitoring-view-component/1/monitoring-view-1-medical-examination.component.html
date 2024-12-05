@@ -6,7 +6,6 @@
             <button hlmTabsTrigger="unlock-next-step">Unlock Next Step</button>
         </hlm-tabs-list>
 
-        <!-- Manage Appointments Tab -->
         <div hlmTabsContent="manage-appointments">
             <section hlmCard>
                 <div hlmCardHeader>
@@ -20,14 +19,13 @@
                     </p>
                 </div>
                 <p hlmCardContent>
-                    <appointment-component [data]="(widgetData$ | async) ?? []"></appointment-component>
+                    <appointment-component [data]="appointments()"></appointment-component>
                 </p>
                 <div hlmCardFooter class="justify-between">
                     <button hlmBtn>Save Changes</button>
 
-                    <hlm-alert-dialog>
-                        <button hlmBtn brnAlertDialogTrigger size="icon"><hlm-icon size='sm'
-                                name="lucidePlus" /></button>
+                    <hlm-alert-dialog >
+                        <button hlmBtn brnAlertDialogTrigger size="icon"><hlm-icon size='sm' name="lucidePlus" /></button>
                         <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" hlmCard>
                             <div hlmCardHeader>
                                 <h3 hlmCardTitle>Create new appointment</h3>
@@ -80,11 +78,27 @@
                         </hlm-alert-dialog-content>
                     </hlm-alert-dialog>
 
+                    <!-- <hlm-alert-dialog>
+                        <button id="edit-profile" variant="outline" brnAlertDialogTrigger hlmBtn>Delete Account</button>
+                        <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+                          <hlm-alert-dialog-header>
+                            <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
+                            <p hlmAlertDialogDescription>
+                              This action cannot be undone. This will permanently delete your account and remove your data from our
+                              servers.
+                            </p>
+                          </hlm-alert-dialog-header>
+                          <hlm-alert-dialog-footer>
+                            <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+                            <button hlmAlertDialogAction (click)="ctx.close()">Delete account</button>
+                          </hlm-alert-dialog-footer>
+                        </hlm-alert-dialog-content>
+                      </hlm-alert-dialog> -->
+
                 </div>
             </section>
         </div>
 
-        <!-- Confirm Appointments Tab -->
         <div hlmTabsContent="confirm-appointments">
             <section hlmCard>
                 <div hlmCardHeader>
@@ -106,7 +120,6 @@
             </section>
         </div>
 
-        <!-- Unlock Next Step Tab -->
         <div hlmTabsContent="unlock-next-step">
             <section hlmCard>
                 <div hlmCardHeader>
@@ -128,4 +141,7 @@
             </section>
         </div>
     </hlm-tabs>
-</div>
+</div> 
+
+
+<button (click)="createDemoAppointment()">Create Demo Appointment</button>
