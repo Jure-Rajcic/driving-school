@@ -18,6 +18,7 @@ import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
 import { CarouselPageResultComponent } from 'src/app/components/carousel-page-result-component';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { hlmH1, hlmP } from '../../../libs/ui/ui-typography-helm/src/index';
+import { MedicalExaminationService } from "../services/carousel-page-service-1-medical-examination";
 
 @Component({
   selector: 'medical-examination-result',
@@ -48,7 +49,7 @@ import { hlmH1, hlmP } from '../../../libs/ui/ui-typography-helm/src/index';
       </div>
       <div class="w-full flex flex-row items-center gap-2">
       <hlm-icon name="lucideCircleX" class="text-red-500"></hlm-icon>
-        <p>The administrator has approved you for the next stage.</p>
+        <p>The administrator considers this step complete.</p>
       </div>
 
       <button class="mt-auto w-full" hlmBtn (click)="handleClick()">
@@ -57,11 +58,14 @@ import { hlmH1, hlmP } from '../../../libs/ui/ui-typography-helm/src/index';
     </div>
     `,
 })
+//TODO refactor to use realtime data to update the view
 export class MedicalExaminationResultComponent {
-  widgetData$: Observable<MedicalExaminationWidgetType[]> = inject(WidgetService).widgetData$;
+
+  service = inject(MedicalExaminationService);
 
   handleClick() {
-    console.log('Unlocking next assignment');
+    console.log('simulateRequest');
+    this.service.simulateRequest();
   }
 
 }

@@ -1,0 +1,10 @@
+<div class="w-full max-w-6xl p-4 mx-auto">
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+        <div *ngFor="let screen of screens"
+            class="w-full aspect-square p-4 border rounded hover:scale-105 transition-transform duration-300 cursor-pointer"
+            (click)="handleClick(screen)">
+            <app-svg #appSvg [baseFileName]="screen.baseFileName"></app-svg>
+            <div [class]="hlmLead" class="">{{ screen.label }}</div>
+        </div>
+    </div>
+</div>

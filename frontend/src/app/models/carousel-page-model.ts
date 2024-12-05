@@ -90,4 +90,4 @@ class CarouselPageModel {
 
 }
 
-export { CarouselPageModel , CarouselPageState, CAROUSEL_PAGE_CONTENT };
+export { CarouselPageModel , CarouselPageState };

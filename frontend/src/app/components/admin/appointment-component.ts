@@ -2,7 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, computed, effect, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { lucideArrowUpDown, lucideChevronDown, lucideCopy } from '@ng-icons/lucide';
+import { lucideArrowUpDown, lucideChevronDown, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
 import {  HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
@@ -15,10 +15,22 @@ import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
 import { debounceTime, map } from 'rxjs';
 import { toast } from 'ngx-sonner';
-import { HlmToasterComponent } from '@spartan-ng/ui-sonner-helm';
+import { MedicalExaminationWidgetType } from 'src/app/services/widget-service';
+import {
+  BrnAlertDialogContentDirective,
+  BrnAlertDialogTriggerDirective,
+} from '@spartan-ng/ui-alertdialog-brain';
+import {
+  HlmAlertDialogActionButtonDirective,
+  HlmAlertDialogCancelButtonDirective,
+  HlmAlertDialogComponent,
+  HlmAlertDialogContentComponent,
+  HlmAlertDialogDescriptionDirective,
+  HlmAlertDialogFooterComponent,
+  HlmAlertDialogHeaderComponent,
+  HlmAlertDialogTitleDirective,
+} from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { MedicalExaminationWidgetType } from '../services/widget-service';
-
 
 @Component({
   selector: 'appointment-component',
@@ -35,120 +47,21 @@ import { MedicalExaminationWidgetType } from '../services/widget-service';
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
-    HlmToasterComponent, 
-    HlmButtonDirective
+    HlmButtonDirective,
+    BrnAlertDialogTriggerDirective,
+    BrnAlertDialogContentDirective,
+    HlmAlertDialogComponent,
+    HlmAlertDialogHeaderComponent,
+    HlmAlertDialogFooterComponent,
+    HlmAlertDialogTitleDirective,
+    HlmAlertDialogDescriptionDirective,
+    HlmAlertDialogCancelButtonDirective,
+    HlmAlertDialogActionButtonDirective,
+    HlmAlertDialogContentComponent,
+    HlmButtonDirective,
   ],
-  providers: [provideIcons({ lucideChevronDown, lucideCopy, lucideArrowUpDown })],
-  template: `
-    <div class="flex flex-col justify-between gap-4 sm:flex-row">
-      <input
-        hlmInput
-        class="w-full md:w-80"
-        placeholder="Filter times..."
-        [ngModel]="_timeFilter()"
-        (ngModelChange)="_rawFilterInput.set($event)"
-      />
-
-      <button hlmBtn variant="outline" align="end" [brnMenuTriggerFor]="menu">
-        Columns
-        <hlm-icon name="lucideChevronDown" class="ml-2" size="sm" />
-      </button>
-      <ng-template #menu>
-        <hlm-menu class="w-32">
-          @for (column of _brnColumnManager.allColumns; track column.name) {
-            <button
-              hlmMenuItemCheckbox
-              [disabled]="_brnColumnManager.isColumnDisabled(column.name)"
-              [checked]="_brnColumnManager.isColumnVisible(column.name)"
-              (triggered)="_brnColumnManager.toggleVisibility(column.name)"
-            >
-              <hlm-menu-item-check />
-              <span>{{ column.label }}</span>
-            </button>
-          }
-        </hlm-menu>
-      </ng-template>
-    </div>
-
-    <brn-table
-      hlm
-      stickyHeader
-      class="border-border mt-4 block h-[335px] overflow-auto rounded-md border"
-      [dataSource]="_filteredSortedPaginatedData()"
-      [displayedColumns]="_allDisplayedColumns()"
-    >
-      <brn-column-def name="select" class="w-12">
-        <hlm-th *brnHeaderDef>
-          <hlm-checkbox [checked]="_checkboxState()" (changed)="handleHeaderCheckboxChange()" />
-        </hlm-th>
-        <hlm-td *brnCellDef="let element">
-          <hlm-checkbox [checked]="_isPaymentSelected(element)" (changed)="togglePayment(element)" />
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="date" class="flex-1">
-        <hlm-th truncate *brnHeaderDef>Date</hlm-th>
-        <hlm-td truncate *brnCellDef="let element">
-          {{ element.date }}
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="time" class="flex-1">
-        <hlm-th truncate *brnHeaderDef>Time</hlm-th>
-        <hlm-td truncate *brnCellDef="let element">
-          {{ element.time }}
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="location" class="flex-1">
-        <hlm-th truncate *brnHeaderDef>Location</hlm-th>
-        <hlm-td truncate *brnCellDef="let element">
-          {{ element.location }}
-        </hlm-td>
-      </brn-column-def>
-
-      
-      <brn-column-def name="actions" class="w-16">
-        <hlm-th *brnHeaderDef></hlm-th>
-        <hlm-td *brnCellDef="let element">
-        <hlm-toaster />
-          <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" (click)="showToast(element)">
-            <hlm-icon class="w-4 h-4" name="lucideCopy" />
-          </button>
-        </hlm-td>
-      </brn-column-def>
-      <div class="flex items-center justify-center p-20 text-muted-foreground" brnNoDataRow>No data</div>
-    </brn-table>
-    <div
-      class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center"
-      *brnPaginator="let ctx; totalElements: _totalElements(); pageSize: _pageSize(); onStateChange: _onStateChange"
-    >
-      <span class="text-sm text-muted-foreground text-sm">{{ _selected().length }} of {{ _totalElements() }} row(s) selected</span>
-      <div class="flex mt-2 sm:mt-0">
-        <brn-select class="inline-block" placeholder="{{ _availablePageSizes[0] }}" [(ngModel)]="_pageSize">
-          <hlm-select-trigger class="inline-flex mr-1 w-15 h-9">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            @for (size of _availablePageSizes; track size) {
-              <hlm-option [value]="size">
-                {{ size === 10000 ? 'All' : size }}
-              </hlm-option>
-            }
-          </hlm-select-content>
-        </brn-select>
-
-        <div class="flex space-x-1">
-          <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.decrementable()" (click)="ctx.decrement()">
-            Previous
-          </button>
-          <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.incrementable()" (click)="ctx.increment()">
-            Next
-          </button>
-        </div>
-      </div>
-    </div>
-  `,
+  providers: [provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown })],
+  templateUrl: './appointment-component.html',
 })
 // TODO refactor this component to be generalizide for apointments
 export class AppointmentComponent {
@@ -249,7 +162,7 @@ export class AppointmentComponent {
     effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), { allowSignalWrites: true });
   }
 
-  protected togglePayment(row: MedicalExaminationWidgetType) {
+  protected toggleRow(row: MedicalExaminationWidgetType) {
     this._selectionModel.toggle(row);
   }
 
@@ -260,16 +173,6 @@ export class AppointmentComponent {
     } else {
       this._selectionModel.deselect(...this._filteredSortedPaginatedData());
     }
-  }
-
-  showToast(element: MedicalExaminationWidgetType) {
-    toast('Location Copied', {
-      description: `Do you need directions?`,
-      action: {
-        label: 'Open in Google Maps',
-        onClick: () => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(element.location)}`, '_blank'),
-      },
-    });
   }
 
   getSelectedAppointments(): MedicalExaminationWidgetType[] {

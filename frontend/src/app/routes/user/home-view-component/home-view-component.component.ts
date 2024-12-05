@@ -1,6 +1,6 @@
 import { Component, inject, model, Type, ViewChild } from '@angular/core';
 import { HlmCarouselComponent, HlmCarouselContentComponent, HlmCarouselItemComponent } from '@spartan-ng/ui-carousel-helm';
-import { hlmH1 } from './../../../../libs/ui/ui-typography-helm/src/index';
+import { hlmH1 } from './../../../../../libs/ui/ui-typography-helm/src/index';
 import { provideIcons } from '@ng-icons/core';
 import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole } from '@ng-icons/lucide';
 import { HlmCardDirective } from '@spartan-ng/ui-card-helm';

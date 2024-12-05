@@ -16,14 +16,16 @@ export const appRoutes: Routes = [
     path: 'admin',
     component: AdminSidebarComponent,
     children: [
-      { path: 'home', loadComponent: () => import('./routes/dummy-view-component/dummy-view-component.component').then(m => m.DummyViewComponentComponent)  },
+      {path: 'monitoring', loadComponent: () => import('./routes/admin/monitoring-view-component/monitoring-view-component.component').then(m => m.MonitoringViewComponent)},
+      {path: 'monitoring/1', loadComponent: () => import('./routes/admin/monitoring-view-component/1/monitoring-view-1-medical-examination.component').then(m => m.MonitoringViewMedicalExaminationComponent)},
+      // {path: 'home', loadComponent: () => import('./routes/admin/home-view-component/home-view-component.component').then(m => m.AdminHomeViewComponentComponent)},
     ],
   },
   {
     path: 'user',
     component: ClientSidebarComponent,
     children: [
-      { path: 'home', loadComponent: () => import('./routes/home-view-component/home-view-component.component').then(m => m.HomeViewComponentComponent) },
+      { path: 'home', loadComponent: () => import('./routes/user/home-view-component/home-view-component.component').then(m => m.HomeViewComponentComponent) },
     ],
   },
   { path: '', redirectTo: 'user/home', pathMatch: 'full' },

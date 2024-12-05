@@ -17,7 +17,7 @@ import {
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { Subject, Subscription } from 'rxjs';
-import { CAROUSEL_PAGE_CONTENT, CarouselPageModel, CarouselPageState } from '../models/carousel-page-model';
+import { CarouselPageModel, CarouselPageState } from '../models/carousel-page-model';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { DialogDoneModel, CarouselPageItemDialogModel, DialogLockedModel, DialogWorkInProgressModel } from '../models/carousel-page-item-dialog-model';
 
