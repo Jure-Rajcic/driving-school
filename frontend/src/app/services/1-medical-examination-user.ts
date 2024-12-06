@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SocketService } from './socket-service';
-import { SocketServiceWorker } from './socket-service-worker';
+import { SocketEventHandler } from './socket-event-handler';
 import { AppointmentDTO, MEDICAL_EXAMINATIOU_USER_SERVICE } from '@shared/dtos';
 
 @Injectable({
     providedIn: 'root',
 })
-export class MedicalExaminationUserService extends SocketServiceWorker<AppointmentDTO, AppointmentDTO> {
+export class MedicalExaminationUserService extends SocketEventHandler<AppointmentDTO> {
 
     constructor() { super(MEDICAL_EXAMINATIOU_USER_SERVICE); }
 

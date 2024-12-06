@@ -19,7 +19,6 @@ import {
   HlmTabsTriggerDirective,
 } from '@spartan-ng/ui-tabs-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { MedicalExaminationWidgetType, WidgetService } from "src/app/services/widget-service";
 import { lucidePlus } from "@ng-icons/lucide";
 import { provideIcons } from "@ng-icons/core";
 import { HlmIconComponent } from "../../../../../../libs/ui/ui-icon-helm/src/lib/hlm-icon.component";
@@ -51,7 +50,9 @@ import {
 } from '@spartan-ng/ui-popover-brain';
 import { AppointmentComponent } from "src/app/components/admin/appointment-component";
 import { hlmH1 } from "@spartan-ng/ui-typography-helm";
-import { MedicalExaminationAdminService } from "src/app/services/1-medical-examination-admin";
+import { AppointmentManagementService } from "src/app/services/1-medical-examination-admin-appointment-managment-service";
+import { APPOINTMENT_CONFIRMATION_SERVICE, APPOINTMENT_MANAGEMENT_SERVICE, AppointmentConfirmationReqDto, AppointmentDTO } from "@shared/dtos";
+import { SocketService } from "src/app/services/socket-service";
 
 type Clinic = { label: string; value: string }
 
@@ -122,10 +123,7 @@ type Clinic = { label: string; value: string }
 export class MonitoringViewMedicalExaminationComponent {
 
   hlmH1 = hlmH1;
-  widgetService = inject(WidgetService);
-  adminService = inject(MedicalExaminationAdminService);
-  
-  widgetData$: Observable<MedicalExaminationWidgetType[]> = this.widgetService.widgetData$;
+  adminService = inject(AppointmentManagementService);
   appointments = this.adminService.appointments;
 
   public clinics = [
@@ -159,8 +157,24 @@ export class MonitoringViewMedicalExaminationComponent {
     }
   }
 
+  socketService = inject(SocketService);
 
-  createDemoAppointment() {
-    this.adminService.simulateRequest();
+  simulateAdminAddedAppointment() {
+    const demo: AppointmentDTO = {'date': '2021-01-01', 'time': '12:00', 'location': 'New York'};
+    this.socketService.sendSocketEvent(APPOINTMENT_MANAGEMENT_SERVICE, demo);
   }
+
+  simulateClientSendAppointmentConfirmationReq() {
+    const dummy: AppointmentConfirmationReqDto = {
+      appointments: [
+        { date: '2021-01-01', time: '12:00', location: 'New York'},
+        { date: '2021-01-01', time: '12:00', location: 'New York'},
+        { date: '2021-01-01', time: '12:00', location: 'New York'},
+      ],
+      userId: 1
+    }
+    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_SERVICE, dummy)
+  }
+
+  
 }

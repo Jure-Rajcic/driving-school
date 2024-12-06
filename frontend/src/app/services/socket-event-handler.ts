@@ -11,23 +11,17 @@ import { SocketService } from './socket-service';
 // }
 
 
-export abstract class SocketServiceWorker<REQ, RES> {
+export abstract class SocketEventHandler<RES> {
 
-    public readonly service: string;
+    public readonly event: string;
     private readonly socketService = inject(SocketService);
 
-    constructor(service: string) {
-        console.log(`Creating worker for serviceIdentity: ${service}`);
-        this.service = service;
-        this.socketService.attachSocketServiceWorker(this);
-    }
-
-    emitRealTimeUpdate(data: REQ): void {
-        this.socketService.triggerSocketEvent(this, data);
+    constructor(event: string) {
+        console.log(`Creating worker for serviceIdentity: ${event}`);
+        this.event = event;
+        this.socketService.addSocketEventHandler(this);
     }
 
     abstract onRealTimeUpdate(data: RES): void;
-
-
 }
 

@@ -4,11 +4,11 @@ import { hlmH1 } from './../../../../../libs/ui/ui-typography-helm/src/index';
 import { provideIcons } from '@ng-icons/core';
 import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole } from '@ng-icons/lucide';
 import { HlmCardDirective } from '@spartan-ng/ui-card-helm';
-import { CarouselPageItemComponent } from 'src/app/components/carousel-page-item-component';
 import { CarouselPageModel, CarouselPageState } from 'src/app/models/carousel-page-model';
 
-import { CarouselPageContentComponent } from 'src/app/components/carousel-page-content-component';
-import { CarouselPageResultComponent } from 'src/app/components/carousel-page-result-component';
+import { CarouselPageContentComponent } from 'src/app/components/user/carousel-page-content-component';
+import { CarouselPageResultComponent } from 'src/app/components/user/carousel-page-result-component';
+import { CarouselPageItemComponent } from 'src/app/components/user/carousel-page-item-component';
 
 @Component({
   standalone: true,

@@ -2,9 +2,7 @@ import { Component, ViewChild, OnDestroy, Input, AfterViewInit } from '@angular/
 import { AppSvgComponent } from 'src/app/components/app-svg-component';
 import { provideIcons } from '@ng-icons/core';
 import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole } from '@ng-icons/lucide';
-import { HlmCardContentDirective } from '@spartan-ng/ui-card-helm';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
-import { BrnAlertDialogContentDirective, BrnAlertDialogTriggerDirective } from '@spartan-ng/ui-alertdialog-brain';
 import {
     HlmAlertDialogActionButtonDirective,
     HlmAlertDialogCancelButtonDirective,
@@ -17,9 +15,11 @@ import {
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { Subject, Subscription } from 'rxjs';
-import { CarouselPageModel, CarouselPageState } from '../models/carousel-page-model';
+import { CarouselPageModel, CarouselPageState } from '../../models/carousel-page-model';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { DialogDoneModel, CarouselPageItemDialogModel, DialogLockedModel, DialogWorkInProgressModel } from '../models/carousel-page-item-dialog-model';
+import { CarouselPageItemDialogModel } from '../../models/carousel-page-item-dialog-model';
+import { HlmCardContentDirective } from '@spartan-ng/ui-card-helm';
+import { BrnAlertDialogContentDirective, BrnAlertDialogTriggerDirective } from '@spartan-ng/ui-alertdialog-brain';
 
 
 

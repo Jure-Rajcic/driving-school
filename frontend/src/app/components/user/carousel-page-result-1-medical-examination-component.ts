@@ -1,6 +1,4 @@
 import { Component, inject, ViewChild } from "@angular/core";
-import { AppointmentComponent } from "../widgets/appointment-component";
-import { MedicalExaminationWidgetType, WidgetService } from "../services/widget-service";
 import { Observable } from "rxjs";
 import { AsyncPipe } from "@angular/common";
 import { HlmCarouselComponent, HlmCarouselContentComponent, HlmCarouselItemComponent, HlmCarouselNextComponent, HlmCarouselPreviousComponent } from '@spartan-ng/ui-carousel-helm';
@@ -8,17 +6,17 @@ import { provideIcons } from '@ng-icons/core';
 import { lucideBell, lucideCheck, lucideCircleX, lucideCheckCheck, lucideCircleCheckBig, lucideLockKeyhole, lucideMenu } from '@ng-icons/lucide';
 import { HlmCardDirective } from '@spartan-ng/ui-card-helm';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
-import { CarouselPageItemComponent } from 'src/app/components/carousel-page-item-component';
+import { CarouselPageItemComponent } from 'src/app/components/user/carousel-page-item-component';
 import { CarouselPageModel, CarouselPageState } from 'src/app/models/carousel-page-model';
 
 import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
-import { CarouselPageContentComponent } from 'src/app/components/carousel-page-content-component';
+import { CarouselPageContentComponent } from 'src/app/components/user/carousel-page-content-component';
 import { ParagraphWidgetComponent } from 'src/app/widgets/paragraph-widget';
 import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
-import { CarouselPageResultComponent } from 'src/app/components/carousel-page-result-component';
+import { CarouselPageResultComponent } from 'src/app/components/user/carousel-page-result-component';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { hlmH1, hlmP } from '../../../libs/ui/ui-typography-helm/src/index';
-import { MedicalExaminationUserService } from "../services/1-medical-examination-user";
+import { hlmH1, hlmP } from '../../../../libs/ui/ui-typography-helm/src/index';
+import { MedicalExaminationUserService } from "../../services/1-medical-examination-user";
 
 @Component({
   selector: 'medical-examination-result',

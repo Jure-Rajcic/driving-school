@@ -1,51 +1,61 @@
 import { io } from 'socket.io-client';
 import { Injectable } from '@angular/core';
-import { SocketServiceWorker } from './socket-service-worker';
-import { IDENTIFY, IdentifyDTO, MEDICAL_EXAMINATION_ADMIN_SERVICE } from '@shared/dtos';
+import { SocketEventHandler } from './socket-event-handler';
+import { IDENTIFY, IdentifyDTO, APPOINTMENT_MANAGEMENT_SERVICE } from '@shared/dtos';
 
 @Injectable({
     providedIn: 'root',
 })
 export class SocketService {
-    protected readonly socket = io('http://localhost:3000');
-    private readonly workers = new Map<string, SocketServiceWorker<any, any>>();
+    protected readonly serverSocket = io('http://localhost:3000');
+    private readonly handlers = new Map<string, SocketEventHandler<any>>();
 
     constructor() {
         this.subscribeToSocketEvents();
     }
 
-    attachSocketServiceWorker<REQ, RES>(worker: SocketServiceWorker<REQ, RES>): void {
-        this.workers.set(worker.service, worker);
-        console.log(`Registered worker for event: ${worker.service}`);
+    public addSocketEventHandler<RES>(handler: SocketEventHandler<RES>): void {
+        this.handlers.set(handler.event, handler);
+        console.log(`Registered handler for event: ${handler.event}`);
     }
 
-    // Offer a way to emit events to the server from every worker
-    triggerSocketEvent<REQ, RES>(worker: SocketServiceWorker<REQ, RES>, data: any): void {
-        console.log(`Emitting event: ${worker.service} socket.id:`, this.socket.id, 'data:', data);
-        this.socket.emit(worker.service, data);
-    }
-
-    // Listen for all events and forward them to the appropriate worker
+    // Listen for all events and forward them to the appropriate handler
     private subscribeToSocketEvents(): void {
-        this.socket.onAny((event: string, data: any) => {
+        this.serverSocket.onAny((event: string, data: any) => {
             switch (event) {
                 case IDENTIFY:
-                    const dto: IdentifyDTO = { role: 'admin', id: 123 };
-                    this.socket.emit(IDENTIFY, dto);
+                    const dto = this.createDummyIdentifyDto();
+                    this.serverSocket.emit(IDENTIFY, dto);
                     break;
                 default:
-                    this.delegateToWorkers(event, data);
+                    this.forwardEventToHandler(event, data);
             }
         });
     }
 
-    private delegateToWorkers(event: string, data: any): void {
-        console.log(`Delegating event: ${event} to workers`);
-        const worker = this.workers.get(event);
-        if (worker) {
-            worker.onRealTimeUpdate(data);
+    // TODO remove this dummy DTO
+    private createDummyIdentifyDto(): IdentifyDTO {
+        const port = parseInt(window.location.port);
+        if(port === 4200) return { id: 1, role: 'admin' };
+         else return { id: 1, role: 'user' };
+    }
+
+    // Forward the event to the appropriate handler
+    private forwardEventToHandler(event: string, data: any): void {
+        console.log(`forwarding event: ${event} to handler: ${this.handlers.get(event)}`);
+        const handler = this.handlers.get(event);
+        if (handler) {
+            handler.onRealTimeUpdate(data);
         } else {
-            console.warn(`No worker found for event: ${event}`);
+            console.warn(`No handler found for event: ${event}`);
         }
     }
+
+    // Offer a way to emit events to the server from every handler
+    public sendSocketEvent<REQ>(event: string, data: REQ): void {
+        console.log(`Emitting event: ${event} with data: ${data} to server`);
+        this.serverSocket.emit(event, data);
+    }
+
+
 }

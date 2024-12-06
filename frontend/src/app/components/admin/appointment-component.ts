@@ -4,7 +4,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { lucideArrowUpDown, lucideChevronDown, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
-import {  HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
+import {  HlmCheckboxCheckIconComponent, HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
@@ -15,7 +15,6 @@ import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
 import { debounceTime, map } from 'rxjs';
 import { toast } from 'ngx-sonner';
-import { MedicalExaminationWidgetType } from 'src/app/services/widget-service';
 import {
   BrnAlertDialogContentDirective,
   BrnAlertDialogTriggerDirective,
@@ -31,6 +30,8 @@ import {
   HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+import { AppointmentDTO } from '@shared/dtos';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'appointment-component',
@@ -49,13 +50,24 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
     HlmAlertDialogHeaderComponent,
     HlmAlertDialogFooterComponent,
     HlmAlertDialogContentComponent,
+    FormsModule,
+    BrnMenuTriggerDirective,
+    HlmMenuModule,
+    BrnTableModule,
+    HlmTableModule,
+    HlmButtonModule,
+    HlmIconComponent,
+    HlmInputDirective,
+    HlmCheckboxComponent,
+    BrnSelectModule,
+    HlmSelectModule,
   ],
   providers: [provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown })],
   templateUrl: './appointment-component.html',
 })
 // TODO refactor this component to be generalizide for apointments
 export class AppointmentComponent {
-  @Input() set data(newData: MedicalExaminationWidgetType[]) {
+  @Input() set data(newData: AppointmentDTO[]) {
     if (newData && Array.isArray(newData)) {
       // Merge new data with the existing data and sort
       const sortedData = newData.sort((a, b) => {
@@ -95,8 +107,8 @@ export class AppointmentComponent {
   protected readonly _availablePageSizes = [5, 10, 20, 10000];
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
-  private readonly _selectionModel = new SelectionModel<MedicalExaminationWidgetType>(true);
-  protected readonly _isPaymentSelected = (row: MedicalExaminationWidgetType) => this._selectionModel.isSelected(row);
+  private readonly _selectionModel = new SelectionModel<AppointmentDTO>(true);
+  protected readonly _isPaymentSelected = (row: AppointmentDTO) => this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(this._selectionModel.changed.pipe(map((change) => change.source.selected)), {
     initialValue: [],
   });
@@ -152,7 +164,7 @@ export class AppointmentComponent {
     effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), { allowSignalWrites: true });
   }
 
-  protected toggleRow(row: MedicalExaminationWidgetType) {
+  protected toggleRow(row: AppointmentDTO) {
     this._selectionModel.toggle(row);
   }
 
@@ -165,7 +177,7 @@ export class AppointmentComponent {
     }
   }
 
-  getSelectedAppointments(): MedicalExaminationWidgetType[] {
+  getSelectedAppointments(): AppointmentDTO[] {
     return this._selected();
   }
 }

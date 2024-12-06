@@ -17,7 +17,8 @@ import { debounceTime, map } from 'rxjs';
 import { toast } from 'ngx-sonner';
 import { HlmToasterComponent } from '@spartan-ng/ui-sonner-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { MedicalExaminationWidgetType } from '../services/widget-service';
+import { AppointmentDTO } from '@shared/dtos';
+
 
 
 @Component({
@@ -39,120 +40,12 @@ import { MedicalExaminationWidgetType } from '../services/widget-service';
     HlmButtonDirective
   ],
   providers: [provideIcons({ lucideChevronDown, lucideCopy, lucideArrowUpDown })],
-  template: `
-    <div class="flex flex-col justify-between gap-4 sm:flex-row">
-      <input
-        hlmInput
-        class="w-full md:w-80"
-        placeholder="Filter times..."
-        [ngModel]="_timeFilter()"
-        (ngModelChange)="_rawFilterInput.set($event)"
-      />
-
-      <button hlmBtn variant="outline" align="end" [brnMenuTriggerFor]="menu">
-        Columns
-        <hlm-icon name="lucideChevronDown" class="ml-2" size="sm" />
-      </button>
-      <ng-template #menu>
-        <hlm-menu class="w-32">
-          @for (column of _brnColumnManager.allColumns; track column.name) {
-            <button
-              hlmMenuItemCheckbox
-              [disabled]="_brnColumnManager.isColumnDisabled(column.name)"
-              [checked]="_brnColumnManager.isColumnVisible(column.name)"
-              (triggered)="_brnColumnManager.toggleVisibility(column.name)"
-            >
-              <hlm-menu-item-check />
-              <span>{{ column.label }}</span>
-            </button>
-          }
-        </hlm-menu>
-      </ng-template>
-    </div>
-
-    <brn-table
-      hlm
-      stickyHeader
-      class="border-border mt-4 block h-[335px] overflow-auto rounded-md border"
-      [dataSource]="_filteredSortedPaginatedData()"
-      [displayedColumns]="_allDisplayedColumns()"
-    >
-      <brn-column-def name="select" class="w-12">
-        <hlm-th *brnHeaderDef>
-          <hlm-checkbox [checked]="_checkboxState()" (changed)="handleHeaderCheckboxChange()" />
-        </hlm-th>
-        <hlm-td *brnCellDef="let element">
-          <hlm-checkbox [checked]="_isPaymentSelected(element)" (changed)="togglePayment(element)" />
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="date" class="flex-1">
-        <hlm-th truncate *brnHeaderDef>Date</hlm-th>
-        <hlm-td truncate *brnCellDef="let element">
-          {{ element.date }}
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="time" class="flex-1">
-        <hlm-th truncate *brnHeaderDef>Time</hlm-th>
-        <hlm-td truncate *brnCellDef="let element">
-          {{ element.time }}
-        </hlm-td>
-      </brn-column-def>
-
-      <brn-column-def name="location" class="flex-1">
-        <hlm-th truncate *brnHeaderDef>Location</hlm-th>
-        <hlm-td truncate *brnCellDef="let element">
-          {{ element.location }}
-        </hlm-td>
-      </brn-column-def>
-
-      
-      <brn-column-def name="actions" class="w-16">
-        <hlm-th *brnHeaderDef></hlm-th>
-        <hlm-td *brnCellDef="let element">
-        <hlm-toaster />
-          <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" (click)="showToast(element)">
-            <hlm-icon class="w-4 h-4" name="lucideCopy" />
-          </button>
-        </hlm-td>
-      </brn-column-def>
-      <div class="flex items-center justify-center p-20 text-muted-foreground" brnNoDataRow>No data</div>
-    </brn-table>
-    <div
-      class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center"
-      *brnPaginator="let ctx; totalElements: _totalElements(); pageSize: _pageSize(); onStateChange: _onStateChange"
-    >
-      <span class="text-sm text-muted-foreground text-sm">{{ _selected().length }} of {{ _totalElements() }} row(s) selected</span>
-      <div class="flex mt-2 sm:mt-0">
-        <brn-select class="inline-block" placeholder="{{ _availablePageSizes[0] }}" [(ngModel)]="_pageSize">
-          <hlm-select-trigger class="inline-flex mr-1 w-15 h-9">
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content>
-            @for (size of _availablePageSizes; track size) {
-              <hlm-option [value]="size">
-                {{ size === 10000 ? 'All' : size }}
-              </hlm-option>
-            }
-          </hlm-select-content>
-        </brn-select>
-
-        <div class="flex space-x-1">
-          <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.decrementable()" (click)="ctx.decrement()">
-            Previous
-          </button>
-          <button size="sm" variant="outline" hlmBtn [disabled]="!ctx.incrementable()" (click)="ctx.increment()">
-            Next
-          </button>
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: './appointment-component.html',
 })
+
 // TODO refactor this component to be generalizide for apointments
 export class AppointmentComponent {
-  @Input() set data(newData: MedicalExaminationWidgetType[]) {
+  @Input() set data(newData: AppointmentDTO[]) {
     if (newData && Array.isArray(newData)) {
       // Merge new data with the existing data and sort
       const sortedData = newData.sort((a, b) => {
@@ -192,8 +85,8 @@ export class AppointmentComponent {
   protected readonly _availablePageSizes = [5, 10, 20, 10000];
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
-  private readonly _selectionModel = new SelectionModel<MedicalExaminationWidgetType>(true);
-  protected readonly _isPaymentSelected = (row: MedicalExaminationWidgetType) => this._selectionModel.isSelected(row);
+  private readonly _selectionModel = new SelectionModel<AppointmentDTO>(true);
+  protected readonly _isPaymentSelected = (row: AppointmentDTO) => this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(this._selectionModel.changed.pipe(map((change) => change.source.selected)), {
     initialValue: [],
   });
@@ -249,7 +142,7 @@ export class AppointmentComponent {
     effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), { allowSignalWrites: true });
   }
 
-  protected togglePayment(row: MedicalExaminationWidgetType) {
+  protected togglePayment(row: AppointmentDTO) {
     this._selectionModel.toggle(row);
   }
 
@@ -262,7 +155,7 @@ export class AppointmentComponent {
     }
   }
 
-  showToast(element: MedicalExaminationWidgetType) {
+  showToast(element: AppointmentDTO) {
     toast('Location Copied', {
       description: `Do you need directions?`,
       action: {
@@ -272,7 +165,7 @@ export class AppointmentComponent {
     });
   }
 
-  getSelectedAppointments(): MedicalExaminationWidgetType[] {
+  getSelectedAppointments(): AppointmentDTO[] {
     return this._selected();
   }
 }

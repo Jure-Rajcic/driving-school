@@ -2,9 +2,9 @@ import { BehaviorSubject } from 'rxjs';
 import { ParagraphWidgetComponent } from '../widgets/paragraph-widget';
 import { ButtonWidgetComponent } from '../widgets/button-widget';
 import { Type } from '@angular/core';
-import { MedicalExaminationContentComponent } from '../components/carousel-page-content-1-medical-examination-component';
 import { CarouselPageItemDialogs, ChoseCategoryItemDialogs, MedicalExaminationItemDialogs, PsychoTestItemDialogs } from './carousel-page-item-dialogs-model';
-import { MedicalExaminationResultComponent } from '../components/carousel-page-result-1-medical-examination-component';
+import { MedicalExaminationContentComponent } from '../components/user/carousel-page-content-1-medical-examination-component';
+import { MedicalExaminationResultComponent } from '../components/user/carousel-page-result-1-medical-examination-component';
 
 enum CarouselPageState { LOCKED, WIP, DONE }
 
