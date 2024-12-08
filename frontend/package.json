@@ -20,6 +20,7 @@
     "@angular/router": "~18.2.0",
     "@ng-icons/core": "^25.1.0",
     "@ng-icons/lucide": "^29.10.0",
+    "@shared/dtos": "file:.yalc/@shared/dtos",
     "@spartan-ng/ui-accordion-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-alertdialog-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-avatar-brain": "0.0.1-alpha.356",

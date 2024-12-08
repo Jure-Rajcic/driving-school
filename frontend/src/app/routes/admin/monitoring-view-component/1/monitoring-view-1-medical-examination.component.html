@@ -24,8 +24,9 @@
                 <div hlmCardFooter class="justify-between">
                     <button hlmBtn>Save Changes</button>
 
-                    <hlm-alert-dialog >
-                        <button hlmBtn brnAlertDialogTrigger size="icon"><hlm-icon size='sm' name="lucidePlus" /></button>
+                    <hlm-alert-dialog>
+                        <button hlmBtn brnAlertDialogTrigger size="icon"><hlm-icon size='sm'
+                                name="lucidePlus" /></button>
                         <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" hlmCard>
                             <div hlmCardHeader>
                                 <h3 hlmCardTitle>Create new appointment</h3>
@@ -34,11 +35,13 @@
                             <p hlmCardContent>
                                 <label class="block" hlmLabel>
                                     Date
-                                    <input class="mt-1.5 w-full" placeholder="Name of your project" hlmInput type="date"/>
+                                    <input class="mt-1.5 w-full" placeholder="Name of your project" hlmInput
+                                        type="date" />
                                 </label>
                                 <label class="block" hlmLabel>
                                     Time
-                                    <input class="mt-1.5 w-full" placeholder="Name of your project" hlmInput type="time"/>
+                                    <input class="mt-1.5 w-full" placeholder="Name of your project" hlmInput
+                                        type="time" />
                                 </label>
 
                                 <label class="my-4 mb-1.5 block" hlmLabel>
@@ -96,11 +99,8 @@
                     </p>
                 </div>
                 <p hlmCardContent>
-                    <appointment-component [data]="appointments()"></appointment-component>
+                    <appointment-confirmation-data-table [data]="appointmentConfirmationRequests()"></appointment-confirmation-data-table>
                 </p>
-                <div hlmCardFooter>
-                    <button hlmBtn>Save Changes</button>
-                </div>
             </section>
         </div>
 
@@ -124,13 +124,15 @@
             </section>
         </div>
     </hlm-tabs>
-</div> 
+</div>
 
 
+<div class="flex flex-col gap-2 p-2 bg-blue-100">
 
-<button (click)="simulateAdminAddedAppointment()">Simulate Admin Added Appointment</button>
-<!-- <button (click)="simulateAdminDeletedAppointment()">Simulate Admin Deleted Appointment</button> -->
-<!-- <button (click)="simulateClientSendAppointmentConfirmationReq()">Simulate Client Send Appointment Confirmation Request</button> -->
-<!-- <button (click)="simulateAdminConfirmedAppointment()">Simulate Admin Confirmed Appointment</button> -->
-<!-- <button (click)="simulateAdminDeclinedAppointment()">Simulate Admin Declined Appointment</button> -->
-<!-- <button (click)="simulateAdminUnlockedNextStep()">Simulate Admin Unlocked Next Step</button> -->
+    <!-- <button (click)="simulateAdminAddedAppointment()">Simulate Admin Added Appointment</button>
+    <button (click)="simulateAdminDeletedAppointment()">Simulate Admin Deleted Appointment</button> -->
+    <button (click)="simulateClientSendAppointmentConfirmationReq()">Simulate Client Send Appointment Confirmation Request</button>
+    <!-- <button (click)="simulateAdminConfirmedAppointment()">Simulate Admin Confirmed Appointment</button> -->
+    <!-- <button (click)="simulateAdminDeclinedAppointment()">Simulate Admin Declined Appointment</button> -->
+    <!-- <button (click)="simulateAdminUnlockedNextStep()">Simulate Admin Unlocked Next Step</button> -->
+</div>

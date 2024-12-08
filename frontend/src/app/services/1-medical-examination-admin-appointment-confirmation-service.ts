@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { SocketService } from './socket-service';
-import { AppointmentDTO, APPOINTMENT_CONFIRMATION_SERVICE, AppointmentConfirmationReqDto, AppointmentConfirmationResDto} from '@shared/dtos';
+import { AppointmentDTO, AppointmentConfirmationReqDto, AppointmentConfirmationResDto, APPOINTMENT_CONFIRMATION_EVENT_REQ} from '@shared/dtos';
 import { SocketEventHandler } from './socket-event-handler';
 
 @Injectable({
@@ -8,16 +8,16 @@ import { SocketEventHandler } from './socket-event-handler';
 })
 export class AppointmentConfirmationService extends SocketEventHandler<AppointmentConfirmationReqDto> {
 
-    constructor() { super(APPOINTMENT_CONFIRMATION_SERVICE); }
+    constructor() { super(APPOINTMENT_CONFIRMATION_EVENT_REQ); }
 
-    onRealTimeUpdate(data: AppointmentConfirmationReqDto): void {
-        console.log('AppointmentDTO Result:', data);
-        this.addAppointment(data);
+    handleEvent(data: AppointmentConfirmationReqDto): void {
+        this.addAppointmentConfirmationReq(data);
     }
 
-    appointments = signal<AppointmentConfirmationReqDto[]>([]);
-    addAppointment(appointmentConfirmation: AppointmentConfirmationReqDto): void {
-        this.appointments.set([...this.appointments(), appointmentConfirmation]);
+    appointmentConfirmationRequests = signal<AppointmentConfirmationReqDto[]>([]);
+
+    addAppointmentConfirmationReq(appointmentConfirmation: AppointmentConfirmationReqDto): void {
+        this.appointmentConfirmationRequests.set([...this.appointmentConfirmationRequests(), appointmentConfirmation]);
     }
 
 }

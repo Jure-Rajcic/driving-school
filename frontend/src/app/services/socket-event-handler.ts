@@ -4,13 +4,6 @@ import { inject, Injectable } from '@angular/core';
 import { MedicalExaminationUserService } from './1-medical-examination-user';
 import { SocketService } from './socket-service';
 
-// export interface Descriptor<T> {
-//     readonly sender: 'user' | 'admin',
-//     readonly reciver: 'user' | 'admin' | 'all',
-//     readonly data: T,
-// }
-
-
 export abstract class SocketEventHandler<RES> {
 
     public readonly event: string;
@@ -22,6 +15,6 @@ export abstract class SocketEventHandler<RES> {
         this.socketService.addSocketEventHandler(this);
     }
 
-    abstract onRealTimeUpdate(data: RES): void;
+    abstract handleEvent(data: RES): void;
 }
 

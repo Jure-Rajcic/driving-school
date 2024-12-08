@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "@shared/dtos": {
+      "signature": "624b9edcab83fb87981c60924ada1c34",
+      "file": true
+    }
+  }
+}

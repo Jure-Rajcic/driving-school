@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
-import { Injectable } from '@angular/core';
 import { SocketEventHandler } from './socket-event-handler';
-import { IDENTIFY, IdentifyDTO, APPOINTMENT_MANAGEMENT_SERVICE } from '@shared/dtos';
+import { IDENTIFY, IdentifyDTO } from '@shared/dtos';
+import { Injectable } from '@angular/core';
 
 @Injectable({
     providedIn: 'root',
@@ -45,7 +45,7 @@ export class SocketService {
         console.log(`forwarding event: ${event} to handler: ${this.handlers.get(event)}`);
         const handler = this.handlers.get(event);
         if (handler) {
-            handler.onRealTimeUpdate(data);
+            handler.handleEvent(data);
         } else {
             console.warn(`No handler found for event: ${event}`);
         }

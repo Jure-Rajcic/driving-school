@@ -51,8 +51,10 @@ import {
 import { AppointmentComponent } from "src/app/components/admin/appointment-component";
 import { hlmH1 } from "@spartan-ng/ui-typography-helm";
 import { AppointmentManagementService } from "src/app/services/1-medical-examination-admin-appointment-managment-service";
-import { APPOINTMENT_CONFIRMATION_SERVICE, APPOINTMENT_MANAGEMENT_SERVICE, AppointmentConfirmationReqDto, AppointmentDTO } from "@shared/dtos";
+import { APPOINTMENT_MANAGEMENT_EVENT, AppointmentConfirmationReqDto, AppointmentDTO, ActionWrapper, APPOINTMENT_CONFIRMATION_EVENT_REQ } from "@shared/dtos";
 import { SocketService } from "src/app/services/socket-service";
+import { AppointmentConfirmationService } from "src/app/services/1-medical-examination-admin-appointment-confirmation-service";
+import { AppointmentConfirmationDataTableComponent } from "src/app/components/admin/appointment-confirmation-data-table";
 
 type Clinic = { label: string; value: string }
 
@@ -115,6 +117,7 @@ type Clinic = { label: string; value: string }
     HlmAlertDialogContentComponent,
     HlmAlertDialogHeaderComponent,
     HlmAlertDialogFooterComponent,
+    AppointmentConfirmationDataTableComponent,
   
   ],
     providers: [provideIcons({ lucidePlus, lucideCheck, lucideChevronDown })],
@@ -123,8 +126,8 @@ type Clinic = { label: string; value: string }
 export class MonitoringViewMedicalExaminationComponent {
 
   hlmH1 = hlmH1;
-  adminService = inject(AppointmentManagementService);
-  appointments = this.adminService.appointments;
+  appointmentManagmentService = inject(AppointmentManagementService);
+  appointments = this.appointmentManagmentService.appointments;
 
   public clinics = [
     {
@@ -159,22 +162,41 @@ export class MonitoringViewMedicalExaminationComponent {
 
   socketService = inject(SocketService);
 
+  readonly demo1: AppointmentDTO = { id: 1, 'date': '2021-01-01', 'time': '12:00', 'location': 'New York'};
+  readonly demo2: AppointmentDTO = { id: 2, 'date': '2021-01-02', 'time': '12:20', 'location': 'New York2'};
   simulateAdminAddedAppointment() {
-    const demo: AppointmentDTO = {'date': '2021-01-01', 'time': '12:00', 'location': 'New York'};
-    this.socketService.sendSocketEvent(APPOINTMENT_MANAGEMENT_SERVICE, demo);
+    this.socketService.sendSocketEvent(APPOINTMENT_MANAGEMENT_EVENT,  { action: 'add', payload: this.demo1 });
+    this.socketService.sendSocketEvent(APPOINTMENT_MANAGEMENT_EVENT, { action: 'add', payload: this.demo2 });
   }
 
+  simulateAdminDeletedAppointment() {
+    const data: ActionWrapper<AppointmentDTO> = { action: 'delete', payload: this.demo1 };
+    this.socketService.sendSocketEvent(APPOINTMENT_MANAGEMENT_EVENT, data);
+  }
+
+
+  confirmationAppointmentService = inject(AppointmentConfirmationService);
+  appointmentConfirmationRequests = this.confirmationAppointmentService.appointmentConfirmationRequests;
+  
   simulateClientSendAppointmentConfirmationReq() {
     const dummy: AppointmentConfirmationReqDto = {
       appointments: [
-        { date: '2021-01-01', time: '12:00', location: 'New York'},
-        { date: '2021-01-01', time: '12:00', location: 'New York'},
-        { date: '2021-01-01', time: '12:00', location: 'New York'},
+        { id:1, date: '2021-01-01', time: '12:00', location: 'New York'},
+        { id:2, date: '2021-01-01', time: '14:00', location: 'New York'},
+        { id:3, date: '2021-01-02', time: '12:00', location: 'Chicago'},
       ],
       userId: 1
     }
-    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_SERVICE, dummy)
-  }
+    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT_REQ, dummy)
 
-  
+    const dummy2: AppointmentConfirmationReqDto = {
+      appointments: [
+        { id:4, date: '2021-01-01', time: '12:00', location: 'New York'},
+        { id:5, date: '2021-01-01', time: '14:00', location: 'New York'},
+        { id:6, date: '2021-01-02', time: '12:00', location: 'Chicago'},
+      ],
+      userId: 2
+    }
+    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT_REQ, dummy2)
+  }
 }

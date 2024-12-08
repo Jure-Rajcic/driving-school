@@ -10,7 +10,7 @@ export class MedicalExaminationUserService extends SocketEventHandler<Appointmen
 
     constructor() { super(MEDICAL_EXAMINATIOU_USER_SERVICE); }
 
-    onRealTimeUpdate(data: AppointmentDTO): void {
+    handleEvent(data: AppointmentDTO): void {
         console.log('Received Medical Examination Result:', data);
     }
 
