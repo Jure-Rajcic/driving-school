@@ -10,7 +10,6 @@ export abstract class SocketEventHandler<RES> {
     private readonly socketService = inject(SocketService);
 
     constructor(event: string) {
-        console.log(`Creating worker for serviceIdentity: ${event}`);
         this.event = event;
         this.socketService.addSocketEventHandler(this);
     }

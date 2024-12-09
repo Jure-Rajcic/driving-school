@@ -58,7 +58,7 @@
             <hlm-td *brnCellDef="let element">
 
                 <hlm-alert-dialog>
-                    <button hlmBtn variant="ghost" brnAlertDialogTrigger class="h-6 w-6 p-0">
+                    <button hlmBtn variant="ghost" brnAlertDialogTrigger class="h-6 w-6 p-0" (click)="deleteAppointment(element)">
                         <hlm-icon class="w-4 h-4" name="lucideTrash2" class="text-red-500" />
                     </button>
                     <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">

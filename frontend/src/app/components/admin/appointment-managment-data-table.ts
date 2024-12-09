@@ -4,7 +4,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { lucideArrowUpDown, lucideChevronDown, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
-import {  HlmCheckboxCheckIconComponent, HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
+import { HlmCheckboxCheckIconComponent, HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
@@ -34,7 +34,7 @@ import { AppointmentDTO } from '@shared/dtos';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 
 @Component({
-  selector: 'appointment-component',
+  selector: 'appointment-menagment-data-table',
   standalone: true,
   imports: [
     FormsModule,
@@ -63,31 +63,43 @@ import { DecimalPipe, TitleCasePipe } from '@angular/common';
     HlmSelectModule,
   ],
   providers: [provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown })],
-  templateUrl: './appointment-component.html',
+  templateUrl: './appointment-managment-data-table.html',
 })
 // TODO refactor this component to be generalizide for apointments
-export class AppointmentComponent {
+export class AppointmentManagmentDataTableComponent {
   @Input() set data(newData: AppointmentDTO[]) {
-    if (newData && Array.isArray(newData)) {
-      // Merge new data with the existing data and sort
-      const sortedData = newData.sort((a, b) => {
-        // Compare by date
-        const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
-        if (dateComparison !== 0) return dateComparison;
-  
-        // If dates are equal, compare by time
-        const timeComparison = this._compareTimes(a.time, b.time);
-        if (timeComparison !== 0) return timeComparison;
-  
-        // If time is also equal, compare by location name
-        return a.location.localeCompare(b.location);
-      });
-  
-      // Update the signal with the sorted data
-      this._data.set(sortedData);
-    }
+    if (!newData || !Array.isArray(newData) || newData.length === 0) return;
+
+    this.updateAppointmentsWithSorting(newData);
+
+    // Remove deleted appointments from the data
+    this.deletedAppointments.forEach((deleted) => {
+      const index = this._data().findIndex((a) => a === deleted);
+      if (index !== -1) {
+        this._data().splice(index, 1);
+      }
+    });
   }
-  
+
+  private updateAppointmentsWithSorting(newData: AppointmentDTO[]) {
+    // Merge new data with the existing data and sort
+    const sortedData = newData.sort((a, b) => {
+      // Compare by date
+      const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+      if (dateComparison !== 0) return dateComparison;
+
+      // If dates are equal, compare by time
+      const timeComparison = this._compareTimes(a.time, b.time);
+      if (timeComparison !== 0) return timeComparison;
+
+      // If time is also equal, compare by location name
+      return a.location.localeCompare(b.location);
+    });
+
+    // Update the signal with the sorted data
+    this._data.set(sortedData);
+  }
+
   // Helper function to compare time strings (e.g., "10:00 AM")
   private _compareTimes(time1: string, time2: string): number {
     const parseTime = (time: string) => {
@@ -95,7 +107,7 @@ export class AppointmentComponent {
       const isPM = time.toLowerCase().includes('pm');
       return (hours % 12) + (isPM ? 12 : 0) * 60 + minutes;
     };
-  
+
     return parseTime(time1) - parseTime(time2);
   }
 
@@ -179,5 +191,14 @@ export class AppointmentComponent {
 
   getSelectedAppointments(): AppointmentDTO[] {
     return this._selected();
+  }
+
+  private readonly deletedAppointments: AppointmentDTO[] = [];
+
+  public deleteAppointment(appointment: AppointmentDTO) {
+    const newAppointments = this._data().filter((a) => a !== appointment);
+    this.deletedAppointments.push(appointment);
+    if (this._selectionModel.isSelected(appointment)) this._selectionModel.deselect(appointment);
+    this.updateAppointmentsWithSorting(newAppointments);
   }
 }

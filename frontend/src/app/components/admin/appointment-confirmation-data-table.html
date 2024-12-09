@@ -24,7 +24,7 @@
         [dataSource]="_filteredSortedPaginatedData()" [displayedColumns]="_allDisplayedColumns()">
         <brn-column-def name="select" class="w-12">
             <hlm-th *brnHeaderDef>
-                <hlm-checkbox [checked]="_checkboxState()" (changed)="handleHeaderCheckboxChange()" />
+                <button hlmBtn class="px-2" size="icon" variant="ghost"><hlm-icon name="lucideListChecks" /></button>
             </hlm-th>
             <hlm-td *brnCellDef="let element">
                 <hlm-checkbox [checked]="_isRowSelected(element)" (changed)="toggleRow(element)" />
@@ -66,6 +66,6 @@
     <div class="flex flex-col justify-between item-center mt-4 sm:flex-row sm:items-center"
         *brnPaginator="let ctx; totalElements: _totalElements(); pageSize: _pageSize(); onStateChange: _onStateChange">
         <span class="text-sm text-muted-foreground text-sm">{{ _selected().length }} of {{ _totalElements() }} row(s) selected</span>
-        <button hlmBtn>Save Changes</button>
+        <button hlmBtn (click)="saveChanges()">Save Changes</button>
     </div>
 </div>

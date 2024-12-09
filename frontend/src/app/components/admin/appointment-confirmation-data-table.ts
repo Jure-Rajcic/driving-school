@@ -2,9 +2,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, computed, effect, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { lucideArrowUpDown, lucideChevronDown, lucideTrash2 } from '@ng-icons/lucide';
+import { lucideArrowUpDown, lucideBrainCircuit, lucideChevronDown, lucideListChecks, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
-import {  HlmCheckboxCheckIconComponent, HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
+import { HlmCheckboxCheckIconComponent, HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
@@ -54,9 +54,6 @@ type RowData = {
     BrnSelectModule,
     HlmSelectModule,
     HlmAlertDialogComponent,
-    HlmAlertDialogHeaderComponent,
-    HlmAlertDialogFooterComponent,
-    HlmAlertDialogContentComponent,
     FormsModule,
     BrnMenuTriggerDirective,
     HlmMenuModule,
@@ -69,42 +66,60 @@ type RowData = {
     BrnSelectModule,
     HlmSelectModule,
   ],
-  providers: [provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown })],
+  providers: [provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown, lucideListChecks })],
   templateUrl: './appointment-confirmation-data-table.html',
 })
 
 export class AppointmentConfirmationDataTableComponent {
+
   private readonly _data = signal<RowData[]>([]);
 
-  @Input() set data (newData: AppointmentConfirmationReqDto[]) {
-    if (newData && Array.isArray(newData)) {
-      // Flatten the data into Row objects that include appointment and userId
-      const allRows: RowData[] = newData.flatMap(reqDto =>
-        reqDto.appointments.map(appointment => ({
-          appointment,
-          userId: reqDto.userId,
-        }))
-      );
-  
-      // Sort the rows
-      const sortedRows = allRows.sort((rowA, rowB) => {
-        // Compare by date
-        const dateComparison = new Date(rowA.appointment.date).getTime() - new Date(rowB.appointment.date).getTime();
-        if (dateComparison !== 0) return dateComparison;
-  
-        // Compare by time if dates are equal
-        const timeComparison = this._compareTimes(rowA.appointment.time, rowB.appointment.time);
-        if (timeComparison !== 0) return timeComparison;
-  
-        // Compare by location if time is also equal
-        return rowA.appointment.location.localeCompare(rowB.appointment.location);
-      });
-  
-      // Update the signal with the sorted rows
-      this._data.set(sortedRows);
-    }
+  @Input() set data(newData: AppointmentConfirmationReqDto[]) {
+    if (!newData || !Array.isArray(newData) || newData.length === 0) return;
+
+    // Flatten the data into Row objects that include appointment and userId
+    const allRows: RowData[] = newData.flatMap(reqDto =>
+      reqDto.appointments.map(appointment => ({
+        appointment,
+        userId: reqDto.userId,
+      }))
+    );
+
+    // Save selected requests before updating the data
+    const selectedRequests = this.getSelectedAppointments()
+
+    // Sort the data by date, time, and location
+    this.updateAppointmentsWithSorting(allRows);
+
+    // Restore the selected requests
+    while (this._selected().length > 0) this._selectionModel.deselect(this._selected()[0]);
+    selectedRequests.forEach(selectedRequest => {
+      const row = this._data().find(row => JSON.stringify(row) === JSON.stringify(selectedRequest));
+      if (row) {
+        this._selected().push(row);
+        this.toggleRow(row);
+      }
+    });
   }
-  
+
+  private updateAppointmentsWithSorting(newData: RowData[]) {
+    const sortedRows = newData.sort((rowA, rowB) => {
+      // Compare by date
+      const dateComparison = new Date(rowA.appointment.date).getTime() - new Date(rowB.appointment.date).getTime();
+      if (dateComparison !== 0) return dateComparison;
+
+      // Compare by time if dates are equal
+      const timeComparison = this._compareTimes(rowA.appointment.time, rowB.appointment.time);
+      if (timeComparison !== 0) return timeComparison;
+
+      // Compare by location if time is also equal
+      return rowA.appointment.location.localeCompare(rowB.appointment.location);
+    });
+
+    this._data.set(newData);
+  }
+
+
   // Helper function to compare time strings (e.g., "10:00 AM")
   private _compareTimes(time1: string, time2: string): number {
     const parseTime = (time: string) => {
@@ -112,7 +127,7 @@ export class AppointmentConfirmationDataTableComponent {
       const isPM = time.toLowerCase().includes('pm');
       return (hours % 12) + (isPM ? 12 : 0) * 60 + minutes;
     };
-  
+
     return parseTime(time1) - parseTime(time2);
   }
 
@@ -152,16 +167,12 @@ export class AppointmentConfirmationDataTableComponent {
     const end = this._displayedIndices().end + 1;
     const data = this._filteredData();
     return [...data]
-      
+
   });
   protected readonly _allFilteredPaginatedDataSelected = computed(() =>
     this._filteredSortedPaginatedData().every((row) => this._selected().includes(row)),
   );
-  protected readonly _checkboxState = computed(() => {
-    const noneSelected = this._selected().length === 0;
-    const allSelectedOrIndeterminate = this._allFilteredPaginatedDataSelected() ? true : 'indeterminate';
-    return noneSelected ? false : allSelectedOrIndeterminate;
-  });
+
 
   protected readonly _totalElements = computed(() => this._filteredData().length);
   protected readonly _onStateChange = ({ startIndex, endIndex }: PaginatorState) =>
@@ -175,29 +186,33 @@ export class AppointmentConfirmationDataTableComponent {
 
   protected toggleRow(row: RowData) {
     this._selectionModel.toggle(row);
-
-    console.log('row', row);
-    console.log(this._isRowSelected(row));
-
-    if(this._isRowSelected(row)) {
-      // this._removeRowsForSelectedUsers();
+    if (this._isRowSelected(row)) {
+      this._retainSelectedUserRequest(row);
     } else {
-      // this._addRowsForSelectedUsers();
+      this._restoreUserRequests(row);
     }
   }
 
+  private readonly hiddenUserRequests: Map<number, RowData[]> = new Map();
 
+  private _retainSelectedUserRequest(selectedRequest: RowData) {
+    const allUserRequests = this._data().filter(row => row.userId === selectedRequest.userId);
+    this.hiddenUserRequests.set(selectedRequest.userId, allUserRequests.filter(row => row !== selectedRequest));
+    const newData = this._data().filter(row => this.hiddenUserRequests.get(selectedRequest.userId)!.indexOf(row) === -1);
+    this.updateAppointmentsWithSorting(newData);
+  }
 
-  protected handleHeaderCheckboxChange() {
-    const previousCbState = this._checkboxState();
-    if (previousCbState === 'indeterminate' || !previousCbState) {
-      this._selectionModel.select(...this._filteredSortedPaginatedData());
-    } else {
-      this._selectionModel.deselect(...this._filteredSortedPaginatedData());
-    }
+  private _restoreUserRequests(deselectedRequest: RowData) {
+    const newData = this._data().concat(this.hiddenUserRequests.get(deselectedRequest.userId)!);
+    this.hiddenUserRequests.delete(deselectedRequest.userId);
+    this.updateAppointmentsWithSorting(newData);
   }
 
   getSelectedAppointments(): RowData[] {
     return this._selected();
+  }
+
+  saveChanges() {
+    console.log('Saving changes...', this.getSelectedAppointments());
   }
 }

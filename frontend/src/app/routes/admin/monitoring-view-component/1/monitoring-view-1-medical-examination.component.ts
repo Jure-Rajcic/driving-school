@@ -48,7 +48,7 @@ import {
   BrnPopoverContentDirective,
   BrnPopoverTriggerDirective,
 } from '@spartan-ng/ui-popover-brain';
-import { AppointmentComponent } from "src/app/components/admin/appointment-component";
+import { AppointmentManagmentDataTableComponent } from "src/app/components/admin/appointment-managment-data-table";
 import { hlmH1 } from "@spartan-ng/ui-typography-helm";
 import { AppointmentManagementService } from "src/app/services/1-medical-examination-admin-appointment-managment-service";
 import { APPOINTMENT_MANAGEMENT_EVENT, AppointmentConfirmationReqDto, AppointmentDTO, ActionWrapper, APPOINTMENT_CONFIRMATION_EVENT_REQ } from "@shared/dtos";
@@ -61,7 +61,10 @@ type Clinic = { label: string; value: string }
 @Component({
   selector: 'medical-examination-content',
   standalone: true,
-  imports: [AppointmentComponent, AsyncPipe, HlmButtonDirective, HlmTabsComponent,
+  imports: [
+    AppointmentManagmentDataTableComponent, 
+    HlmButtonDirective, 
+    HlmTabsComponent,
     HlmTabsListComponent,
     HlmTabsTriggerDirective,
     HlmTabsContentDirective,
@@ -97,7 +100,7 @@ type Clinic = { label: string; value: string }
     HlmButtonDirective,
 
     HlmButtonDirective,
-    AppointmentComponent,
+    AppointmentManagmentDataTableComponent,
     BrnCommandImports,
     HlmCommandImports,
     HlmIconComponent,
@@ -115,10 +118,7 @@ type Clinic = { label: string; value: string }
     HlmCardFooterDirective,
     HlmButtonDirective,
     HlmAlertDialogContentComponent,
-    HlmAlertDialogHeaderComponent,
-    HlmAlertDialogFooterComponent,
     AppointmentConfirmationDataTableComponent,
-  
   ],
     providers: [provideIcons({ lucidePlus, lucideCheck, lucideChevronDown })],
     templateUrl: './monitoring-view-1-medical-examination.component.html',
@@ -181,9 +181,7 @@ export class MonitoringViewMedicalExaminationComponent {
   simulateClientSendAppointmentConfirmationReq() {
     const dummy: AppointmentConfirmationReqDto = {
       appointments: [
-        { id:1, date: '2021-01-01', time: '12:00', location: 'New York'},
-        { id:2, date: '2021-01-01', time: '14:00', location: 'New York'},
-        { id:3, date: '2021-01-02', time: '12:00', location: 'Chicago'},
+        { id:1, date: '2021-01-01', time: '12:00', location: 'Ohio'},
       ],
       userId: 1
     }
@@ -192,10 +190,9 @@ export class MonitoringViewMedicalExaminationComponent {
     const dummy2: AppointmentConfirmationReqDto = {
       appointments: [
         { id:4, date: '2021-01-01', time: '12:00', location: 'New York'},
-        { id:5, date: '2021-01-01', time: '14:00', location: 'New York'},
-        { id:6, date: '2021-01-02', time: '12:00', location: 'Chicago'},
+        { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'},
       ],
-      userId: 2
+      userId: Math.floor(Math.random() * 100)
     }
     this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT_REQ, dummy2)
   }
