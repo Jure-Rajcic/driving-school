@@ -22,7 +22,7 @@ import { AppointmentDTO } from '@shared/dtos';
 
 
 @Component({
-  selector: 'appointment-component',
+  selector: 'appointment-data-table',
   standalone: true,
   imports: [
     FormsModule,
@@ -40,32 +40,50 @@ import { AppointmentDTO } from '@shared/dtos';
     HlmButtonDirective
   ],
   providers: [provideIcons({ lucideChevronDown, lucideCopy, lucideArrowUpDown })],
-  templateUrl: './appointment-component.html',
+  templateUrl: './appointment-data-table.html',
 })
 
 // TODO refactor this component to be generalizide for apointments
-export class AppointmentComponent {
+export class AppointmentDataTableComponent {
   @Input() set data(newData: AppointmentDTO[]) {
-    if (newData && Array.isArray(newData)) {
-      // Merge new data with the existing data and sort
-      const sortedData = newData.sort((a, b) => {
-        // Compare by date
-        const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
-        if (dateComparison !== 0) return dateComparison;
-  
-        // If dates are equal, compare by time
-        const timeComparison = this._compareTimes(a.time, b.time);
-        if (timeComparison !== 0) return timeComparison;
-  
-        // If time is also equal, compare by location name
-        return a.location.localeCompare(b.location);
-      });
-  
-      // Update the signal with the sorted data
-      this._data.set(sortedData);
-    }
+    if (!newData || !Array.isArray(newData)) return;
+
+    // Save selected requests before updating the data
+    const selectedAppointments = this.getSelectedAppointments()
+
+    // Sort the data by date, time, and location
+    this.updateAppointmentsWithSorting(newData);
+
+    // Restore the selected requests
+    while (this._selected().length > 0) this._selectionModel.deselect(this._selected()[0]);
+    selectedAppointments.forEach(selectedAppointment => {
+      const appointment = this._data().find(appointment => JSON.stringify(appointment) === JSON.stringify(selectedAppointment));
+      if (appointment) {
+        this._selected().push(appointment);
+        this.toggleAppointment(appointment);
+      }
+    });
   }
   
+  private updateAppointmentsWithSorting(newData: AppointmentDTO[]) {
+    // Merge new data with the existing data and sort
+    const sortedData = newData.sort((a, b) => {
+      // Compare by date
+      const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+      if (dateComparison !== 0) return dateComparison;
+
+      // If dates are equal, compare by time
+      const timeComparison = this._compareTimes(a.time, b.time);
+      if (timeComparison !== 0) return timeComparison;
+
+      // If time is also equal, compare by location name
+      return a.location.localeCompare(b.location);
+    });
+
+    // Update the signal with the sorted data
+    this._data.set(sortedData);
+  }
+
   // Helper function to compare time strings (e.g., "10:00 AM")
   private _compareTimes(time1: string, time2: string): number {
     const parseTime = (time: string) => {
@@ -73,7 +91,7 @@ export class AppointmentComponent {
       const isPM = time.toLowerCase().includes('pm');
       return (hours % 12) + (isPM ? 12 : 0) * 60 + minutes;
     };
-  
+
     return parseTime(time1) - parseTime(time2);
   }
 
@@ -86,7 +104,7 @@ export class AppointmentComponent {
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
   private readonly _selectionModel = new SelectionModel<AppointmentDTO>(true);
-  protected readonly _isPaymentSelected = (row: AppointmentDTO) => this._selectionModel.isSelected(row);
+  protected readonly _isAppointmentSelected = (row: AppointmentDTO) => this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(this._selectionModel.changed.pipe(map((change) => change.source.selected)), {
     initialValue: [],
   });
@@ -142,7 +160,7 @@ export class AppointmentComponent {
     effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), { allowSignalWrites: true });
   }
 
-  protected togglePayment(row: AppointmentDTO) {
+  protected toggleAppointment(row: AppointmentDTO) {
     this._selectionModel.toggle(row);
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "@shared/dtos",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "main": "index.js", 
   "devDependencies": {
     "typescript": "^5.x"

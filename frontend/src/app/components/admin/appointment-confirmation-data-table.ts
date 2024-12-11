@@ -30,7 +30,7 @@ import {
   HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { AppointmentConfirmationReqDto, AppointmentDTO } from '@shared/dtos';
+import { AppointmentConfirmationDTO, AppointmentDTO } from '@shared/dtos';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 
 
@@ -74,7 +74,7 @@ export class AppointmentConfirmationDataTableComponent {
 
   private readonly _data = signal<RowData[]>([]);
 
-  @Input() set data(newData: AppointmentConfirmationReqDto[]) {
+  @Input() set data(newData: AppointmentConfirmationDTO[]) {
     if (!newData || !Array.isArray(newData) || newData.length === 0) return;
 
     // Flatten the data into Row objects that include appointment and userId

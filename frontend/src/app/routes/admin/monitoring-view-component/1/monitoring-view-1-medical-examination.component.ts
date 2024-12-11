@@ -51,7 +51,7 @@ import {
 import { AppointmentManagmentDataTableComponent } from "src/app/components/admin/appointment-managment-data-table";
 import { hlmH1 } from "@spartan-ng/ui-typography-helm";
 import { AppointmentManagementService } from "src/app/services/1-medical-examination-admin-appointment-managment-service";
-import { APPOINTMENT_MANAGEMENT_EVENT, AppointmentConfirmationReqDto, AppointmentDTO, ActionWrapper, APPOINTMENT_CONFIRMATION_EVENT_REQ } from "@shared/dtos";
+import { APPOINTMENT_MANAGEMENT_EVENT, AppointmentConfirmationDTO, AppointmentDTO, ActionWrapper, APPOINTMENT_CONFIRMATION_EVENT } from "@shared/dtos";
 import { SocketService } from "src/app/services/socket-service";
 import { AppointmentConfirmationService } from "src/app/services/1-medical-examination-admin-appointment-confirmation-service";
 import { AppointmentConfirmationDataTableComponent } from "src/app/components/admin/appointment-confirmation-data-table";
@@ -177,23 +177,25 @@ export class MonitoringViewMedicalExaminationComponent {
 
   confirmationAppointmentService = inject(AppointmentConfirmationService);
   appointmentConfirmationRequests = this.confirmationAppointmentService.appointmentConfirmationRequests;
-  
-  simulateClientSendAppointmentConfirmationReq() {
-    const dummy: AppointmentConfirmationReqDto = {
-      appointments: [
-        { id:1, date: '2021-01-01', time: '12:00', location: 'Ohio'},
-      ],
+
+  simulateAdminConfirmedAppointment() {
+    const data: AppointmentConfirmationDTO = {
+      appointments: [ { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'} ],
       userId: 1
     }
-    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT_REQ, dummy)
-
-    const dummy2: AppointmentConfirmationReqDto = {
-      appointments: [
-        { id:4, date: '2021-01-01', time: '12:00', location: 'New York'},
-        { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'},
-      ],
-      userId: Math.floor(Math.random() * 100)
-    }
-    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT_REQ, dummy2)
+    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT, data)
   }
+
+  simulateAdminDeclinedAppointment() {
+    // const data: AppointmentConfirmationDTO = {
+    //   appointments: [ { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'} ],
+    //   userId: 1
+    // }
+    // this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT, data)
+  }
+
+  simulateAdminUnlockedNextStep() {
+    this.socketService.sendSocketEvent('test', 1)
+  }
+
 }

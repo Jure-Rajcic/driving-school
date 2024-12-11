@@ -1,5 +1,13 @@
 {
     "angular.enable-strict-mode-prompt": false,
     "css.lint.unknownAtRules": "ignore",
+    "material-icon-theme.files.associations": {
+        "*.ts": "typescript",
+        "**.json": "json",
+    },
+    "material-icon-theme.folders.associations": {
+    "user": "client",
+    "sockets": "client",
+    "features": "project",
 }
-
+}

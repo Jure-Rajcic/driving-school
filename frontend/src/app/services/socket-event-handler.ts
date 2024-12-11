@@ -1,7 +1,6 @@
 
 import { io } from 'socket.io-client';
 import { inject, Injectable } from '@angular/core';
-import { MedicalExaminationUserService } from './1-medical-examination-user';
 import { SocketService } from './socket-service';
 
 export abstract class SocketEventHandler<RES> {

@@ -17,3 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./dtos/medical-examination.dto"), exports);
 __exportStar(require("./dtos/identify.dto"), exports);
 __exportStar(require("./wrappers/action.wrapper"), exports);
+__exportStar(require("./wrappers/server.wrapper"), exports);
+__exportStar(require("./wrappers/state.wrapper"), exports);

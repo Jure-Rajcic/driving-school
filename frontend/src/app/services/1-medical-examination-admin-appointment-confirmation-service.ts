@@ -1,22 +1,22 @@
 import { Injectable, signal } from '@angular/core';
 import { SocketService } from './socket-service';
-import { AppointmentDTO, AppointmentConfirmationReqDto, AppointmentConfirmationResDto, APPOINTMENT_CONFIRMATION_EVENT_REQ} from '@shared/dtos';
+import { AppointmentDTO, AppointmentConfirmationDTO, APPOINTMENT_CONFIRMATION_EVENT } from '@shared/dtos';
 import { SocketEventHandler } from './socket-event-handler';
 
 @Injectable({
     providedIn: 'root',
 })
-export class AppointmentConfirmationService extends SocketEventHandler<AppointmentConfirmationReqDto> {
+export class AppointmentConfirmationService extends SocketEventHandler<AppointmentConfirmationDTO> {
 
-    constructor() { super(APPOINTMENT_CONFIRMATION_EVENT_REQ); }
+    constructor() { super(APPOINTMENT_CONFIRMATION_EVENT); }
 
-    handleEvent(data: AppointmentConfirmationReqDto): void {
+    handleEvent(data: AppointmentConfirmationDTO): void {
         this.addAppointmentConfirmationReq(data);
     }
 
-    appointmentConfirmationRequests = signal<AppointmentConfirmationReqDto[]>([]);
+    appointmentConfirmationRequests = signal<AppointmentConfirmationDTO[]>([]);
 
-    addAppointmentConfirmationReq(appointmentConfirmation: AppointmentConfirmationReqDto): void {
+    addAppointmentConfirmationReq(appointmentConfirmation: AppointmentConfirmationDTO): void {
         this.appointmentConfirmationRequests.set([...this.appointmentConfirmationRequests(), appointmentConfirmation]);
     }
 

@@ -10,25 +10,13 @@ export interface AppointmentDTO {
 export const APPOINTMENT_MANAGEMENT_EVENT = 'appointment-management-event';
 
 
-// **** APPOINTMENT_CONFIRMATION_EVENT_REQ ****
-export interface AppointmentConfirmationReqDto {
+// **** APPOINTMENT_CONFIRMATION_EVENT ****
+export interface AppointmentConfirmationDTO {
     appointments: AppointmentDTO[];
     userId: number;
 }
-export const APPOINTMENT_CONFIRMATION_EVENT_REQ = 'appointment-confirmation-event-req';
-// **** APPOINTMENT_CONFIRMATION_EVENT_RES ****
-export interface AppointmentConfirmationResDto {
-    appointments: AppointmentDTO;
-    userId: number;
-}
-export const APPOINTMENT_CONFIRMATION_EVENT_RES= 'appointment-confirmation-event-res';
+export const APPOINTMENT_CONFIRMATION_EVENT = 'appointment-confirmation-event';
 
 
-
-
-// **** NEXT_STEP_UNLOCK_SERVICE ****
-export const NEXT_STEP_UNLOCK_SERVICE = 'next-step-unlock-service';
-// **** MEDICAL_EXAMINATIOU_USER_SERVICE ****
-export const MEDICAL_EXAMINATIOU_USER_SERVICE = 'medical-examination-user-service';
-
-
+// **** MEDICAL_EXAMINATION_USER_RESULT_EVENT ****
+export const MEDICAL_EXAMINATION_USER_RESULT_EVENT = 'medical-examination-user-result-event';

@@ -1,0 +1,23 @@
+<div class="h-full flex flex-col gap-2 p-2">
+  <div hlmAccordion>
+
+    <div hlmAccordionItem *ngFor="let item of accordionItems()">
+      <button hlmAccordionTrigger>
+        <div class="w-full flex flex-row items-center gap-2" *ngIf="!item.state">
+          <hlm-icon name='lucideCircleX' class='text-red-500' />
+          <p> {{ item.data.get(false)?.title }} </p>
+        </div>
+        <div class="w-full flex flex-row items-center gap-2" *ngIf="item.state">
+          <hlm-icon name='lucideCircleCheckBig' class='text-black-500' />
+          <p> {{ item.data.get(true)?.title }} </p>
+        </div>
+        <hlm-icon hlmAccIcon />
+      </button>
+      <hlm-accordion-content> {{ item.data.get(item.state)?.content }} </hlm-accordion-content>
+    </div>
+  </div>
+
+  <button class="mt-auto w-full" hlmBtn>
+    <hlm-icon size="sm" class="mr-2" name="lucideCheckCheck" /> Unlock Next Assignment
+  </button>
+</div>

@@ -1,0 +1,1 @@
+{"version":3,"file":"sender.wrapper.d.ts","sourceRoot":"","sources":["../../src/wrappers/sender.wrapper.ts"],"names":[],"mappings":"AAAA,KAAK,MAAM,GAAG,OAAO,GAAG,MAAM,CAAC;AAC/B,KAAK,SAAS,GAAG,OAAO,GAAG,MAAM,CAAC;AAElC,MAAM,WAAW,aAAa,CAAC,CAAC;IAC5B,MAAM,EAAE,MAAM,CAAC;IACf,SAAS,EAAE,SAAS,CAAC;IACrB,OAAO,EAAE,CAAC,CAAC;CACd"}
