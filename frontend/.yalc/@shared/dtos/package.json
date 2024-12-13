@@ -1,10 +1,10 @@
 {
   "name": "@shared/dtos",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "index.js",
   "scripts": {
     "update:shared": "tsc && yalc publish && cd ../frontend && yalc add @shared/dtos && cd ../backend && yalc add @shared/dtos",
     "help": "echo 'If experiencing problems, update package.json version and run npm run update:shared'"
   },
-  "yalcSig": "a8f74c3218f19705b12a2582d2f90dc4"
+  "yalcSig": "88dc96d5cdfaf6d418caa76db18c5820"
 }

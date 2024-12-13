@@ -68,7 +68,7 @@ import { DecimalPipe, TitleCasePipe } from '@angular/common';
 // TODO refactor this component to be generalizide for apointments
 export class AppointmentManagmentDataTableComponent {
   @Input() set data(newData: AppointmentDTO[]) {
-    if (!newData || !Array.isArray(newData) || newData.length === 0) return;
+    if (!newData || !Array.isArray(newData)) return;
 
     this.updateAppointmentsWithSorting(newData);
 

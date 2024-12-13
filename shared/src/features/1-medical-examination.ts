@@ -1,1 +1,0 @@
-export const FEATURE_1_MEDICAL_EXAMINATION = 'feature-1-medical-examination';

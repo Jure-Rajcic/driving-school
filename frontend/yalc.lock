@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@shared/dtos": {
-      "signature": "a8f74c3218f19705b12a2582d2f90dc4",
+      "signature": "88dc96d5cdfaf6d418caa76db18c5820",
       "file": true
     }
   }

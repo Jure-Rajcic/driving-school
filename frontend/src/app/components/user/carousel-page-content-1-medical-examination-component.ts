@@ -3,8 +3,8 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { AppointmentManagementService } from "../../services/1-medical-examination-admin-appointment-managment-service";
 import {  hlmH3, hlmUl } from '../../../../libs/ui/ui-typography-helm/src/index';
 import { AppointmentDataTableComponent } from "./appointment-data-table";
-import { APPOINTMENT_CONFIRMATION_EVENT, AppointmentConfirmationDTO } from "@shared/dtos";
-import { SocketService } from "src/app/services/socket-service";
+import { AppointmentConfirmationDTO, MEDICAL_EXAMINATION_USER_REQUESTED_APPOINTMENTS } from "@shared/dtos";
+import { SocketClientService } from "src/app/services/socket-client-service";
 
 @Component({
   selector: 'medical-examination-content',
@@ -30,7 +30,7 @@ export class MedicalExaminationContentComponent  {
     console.log('Selected Appointments:', selectedAppointments);
   }
 
-  readonly socketService = inject(SocketService);
+  readonly socketService = inject(SocketClientService);
   simulateClientSendAppointmentConfirmationReq() {
 
     const dummy2: AppointmentConfirmationDTO = {
@@ -40,7 +40,7 @@ export class MedicalExaminationContentComponent  {
       ],
       userId: 1
     }
-    this.socketService.sendSocketEvent(APPOINTMENT_CONFIRMATION_EVENT, dummy2)
+    this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_USER_REQUESTED_APPOINTMENTS, dummy2)
   }
 
 }

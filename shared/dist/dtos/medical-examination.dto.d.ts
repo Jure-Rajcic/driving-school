@@ -1,3 +1,4 @@
+export declare const FEATURE_1_MEDICAL_EXAMINATION = "feature-1-medical-examination";
 export interface AppointmentDTO {
     id: number;
     date: string;
@@ -5,6 +6,7 @@ export interface AppointmentDTO {
     location: string;
 }
 export declare const APPOINTMENT_MANAGEMENT_EVENT = "appointment-management-event";
+export declare const FEATURE_1_MEDICAL_EXAMINATION_APPOINTMENT_MANAGEMENT_EVENT: string;
 export interface AppointmentConfirmationDTO {
     appointments: AppointmentDTO[];
     userId: number;

@@ -4,6 +4,8 @@
     "material-icon-theme.files.associations": {
         "*.ts": "typescript",
         "**.json": "json",
+        "sockets.gateway.ts":"apiblueprint",
+        "*.event.handler.ts":"Spwn",
     },
     "material-icon-theme.folders.associations": {
     "user": "client",

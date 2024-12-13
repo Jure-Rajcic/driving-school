@@ -75,7 +75,7 @@ export class AppointmentConfirmationDataTableComponent {
   private readonly _data = signal<RowData[]>([]);
 
   @Input() set data(newData: AppointmentConfirmationDTO[]) {
-    if (!newData || !Array.isArray(newData) || newData.length === 0) return;
+    if (!newData || !Array.isArray(newData)) return;
 
     // Flatten the data into Row objects that include appointment and userId
     const allRows: RowData[] = newData.flatMap(reqDto =>
