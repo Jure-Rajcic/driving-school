@@ -1,22 +1,23 @@
 import { io } from 'socket.io-client';
-import { SocketEventHandler } from './socket-event-handler';
 import { IDENTIFY, IdentifyDTO } from '@shared/dtos';
 import { Injectable } from '@angular/core';
+
+type eventHandler = (data: any) => void;
 
 @Injectable({
     providedIn: 'root',
 })
-export class SocketService {
+export class SocketClientService {
     protected readonly serverSocket = io('http://localhost:3000');
-    private readonly handlers = new Map<string, SocketEventHandler<any>>();
+    private readonly eventHandlers = new Map<string, eventHandler>();
 
     constructor() {
         this.subscribeToSocketEvents();
     }
 
-    public addSocketEventHandler<RES>(handler: SocketEventHandler<RES>): void {
-        this.handlers.set(handler.event, handler);
-        console.log(`Registered handler for event: ${handler.event}`);
+    public bindEventCallback(event: string, eventCallback: eventHandler): void {
+        this.eventHandlers.set(event, eventCallback);
+        console.log(`Registered handler for event: ${event}`);
     }
 
     // Listen for all events and forward them to the appropriate handler
@@ -36,23 +37,20 @@ export class SocketService {
     // TODO remove this dummy DTO
     private createDummyIdentifyDto(): IdentifyDTO {
         const port = parseInt(window.location.port);
-        if(port === 4200) return { id: 1, role: 'admin' };
-         else return { id: 1, role: 'user' };
+        if (port === 4200) return { id: 1, role: 'admin' };
+        else return { id: 1, role: 'user' };
     }
 
     // Forward the event to the appropriate handler
     private forwardEventToHandler(event: string, data: any): void {
-        console.log(`forwarding event: ${event} to handler: ${this.handlers.get(event)}`);
-        const handler = this.handlers.get(event);
-        if (handler) {
-            handler.handleEvent(data);
-        } else {
-            console.warn(`No handler found for event: ${event}`);
-        }
+        console.log(`forwarding event: ${event} to handler: ${this.eventHandlers.get(event)}`);
+        const eventCallback = this.eventHandlers.get(event);
+        if (eventCallback) eventCallback(data);
+        else console.warn(`No handler found for event: ${event}`);
     }
 
     // Offer a way to emit events to the server from every handler
-    public sendSocketEvent<REQ>(event: string, data: REQ): void {
+    public sendSocketEvent(event: string, data: any): void {
         console.log(`Emitting event: ${event} with data: ${data} to server`);
         this.serverSocket.emit(event, data);
     }

@@ -28,7 +28,7 @@
         <hlm-checkbox [checked]="_checkboxState()" (changed)="handleHeaderCheckboxChange()" />
       </hlm-th>
       <hlm-td *brnCellDef="let element">
-        <hlm-checkbox [checked]="_isPaymentSelected(element)" (changed)="togglePayment(element)" />
+        <hlm-checkbox [checked]="_isAppointmentSelected(element)" (changed)="toggleAppointment(element)" />
       </hlm-td>
     </brn-column-def>
 

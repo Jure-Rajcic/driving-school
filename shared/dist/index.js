@@ -14,6 +14,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./dtos/medical-examination.dto"), exports);
+__exportStar(require("./dtos/1-medical-examination.dto"), exports);
 __exportStar(require("./dtos/identify.dto"), exports);
-__exportStar(require("./wrappers/action.wrapper"), exports);
+__exportStar(require("./constants/1-medical-examination"), exports);

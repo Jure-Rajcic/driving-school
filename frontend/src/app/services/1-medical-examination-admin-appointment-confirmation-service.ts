@@ -1,23 +1,40 @@
-import { Injectable, signal } from '@angular/core';
-import { SocketService } from './socket-service';
-import { AppointmentDTO, AppointmentConfirmationReqDto, AppointmentConfirmationResDto, APPOINTMENT_CONFIRMATION_EVENT_REQ} from '@shared/dtos';
-import { SocketEventHandler } from './socket-event-handler';
+import { inject, Injectable, signal } from '@angular/core';
+import { SocketClientService } from './socket-client-service';
+import { AppointmentDTO, AppointmentConfirmationDTO, ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, USER_REQUESTED_APPOINTMENTS, MEDICAL_EXAMINATION_ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS } from '@shared/dtos';
+import { filter } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
-export class AppointmentConfirmationService extends SocketEventHandler<AppointmentConfirmationReqDto> {
+export class AppointmentConfirmationService {
 
-    constructor() { super(APPOINTMENT_CONFIRMATION_EVENT_REQ); }
+    private readonly socketService = inject(SocketClientService);
 
-    handleEvent(data: AppointmentConfirmationReqDto): void {
+    constructor() {
+        this.socketService.bindEventCallback(USER_REQUESTED_APPOINTMENTS, this.handleUserRequestedAppointments.bind(this));
+        this.socketService.bindEventCallback(ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, this.handleAdminConfirmedOneOfUserRequestedAppointments.bind(this));
+        this.socketService.bindEventCallback(ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, this.handelAdminRejectedAllOfUserRequestedAppointments.bind(this));
+    }
+
+    readonly appointmentConfirmationRequests = signal<AppointmentConfirmationDTO[]>([]);
+
+    addAppointmentConfirmationReq(appointmentConfirmation: AppointmentConfirmationDTO): void {
+        this.appointmentConfirmationRequests.set([...this.appointmentConfirmationRequests(), appointmentConfirmation]);
+    }
+
+    private handleUserRequestedAppointments(data: AppointmentConfirmationDTO): void {
+        console.log('User requested appointments');
         this.addAppointmentConfirmationReq(data);
     }
 
-    appointmentConfirmationRequests = signal<AppointmentConfirmationReqDto[]>([]);
+    private handleAdminConfirmedOneOfUserRequestedAppointments(data: AppointmentConfirmationDTO): void {
+        console.log('Admin confirmed one of user requested appointments', data);
+        this.appointmentConfirmationRequests.set(this.appointmentConfirmationRequests().filter(a => a.userId !== data.userId));
+    }
 
-    addAppointmentConfirmationReq(appointmentConfirmation: AppointmentConfirmationReqDto): void {
-        this.appointmentConfirmationRequests.set([...this.appointmentConfirmationRequests(), appointmentConfirmation]);
+    private handelAdminRejectedAllOfUserRequestedAppointments(data: AppointmentConfirmationDTO): void {
+        console.log('Admin rejected all of user requested appointments', data);
+        this.appointmentConfirmationRequests.set(this.appointmentConfirmationRequests().filter(a => a.userId !== data.userId));
     }
 
 }
