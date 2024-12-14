@@ -5,6 +5,12 @@
   <li>Our team will reach out in max 48 hours to confirm your appointment.</li>
   <li>After you attend the appointment, our team will unlock the next assignment for you.</li>
 </ul>
-<appointment-data-table [data]="appointments()"></appointment-data-table>
-<button class="w-full mt-4" hlmBtn (click)="requestAppointment()">Request</button>
-<button (click)="simulateClientSendAppointmentConfirmationReq()">Simulate Client Send Appointment Confirmation Request</button>
+<appointment-data-table [data]="appointments()"
+  [onSelectedAppointments]="onSelectedAppointments"></appointment-data-table>
+<appointment-dialog-request-appointments class="mt-4"
+  [selectedAppointments]="selectedAppointments()"
+  (onAppointmentsRequested)="onAppointmentsRequested($event)"
+  ></appointment-dialog-request-appointments>
+
+<!-- <button class="w-full mt-4" hlmBtn (click)="requestAppointment()">Request</button> -->
+<!-- <button (click)="simulateClientSendAppointmentConfirmationReq()">Simulate Client Send Appointment Confirmation Request</button> -->

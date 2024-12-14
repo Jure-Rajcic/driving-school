@@ -1,0 +1,25 @@
+<hlm-alert-dialog>
+  <button *ngIf="IsRequestAppointmentsEnabled()" hlmBtn brnAlertDialogTrigger variant='default'>
+    Request Selected Appointments
+  </button>
+  <button *ngIf="!IsRequestAppointmentsEnabled()" hlmBtn variant='secondary'>
+    select from {{appointmentsSelectionLowerLimit}} up to {{appointmentsSelectionUpperLimit}} appointments
+  </button>
+
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-alert-dialog-header>
+      <h3 hlmAlertDialogTitle>Requesting Selected Appointments</h3>
+      <p hlmAlertDialogDescription>
+        Are you sure you want to request the selected appointments? This action cannot be undone.
+        Admin will be notified of your request and will get back to you as soon as possible wia email
+        and inapp notification.
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction (click)="tryRequestingAppointments() && ctx.close()">
+        make Request
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

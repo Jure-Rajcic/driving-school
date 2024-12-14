@@ -18,6 +18,7 @@ import { toast } from 'ngx-sonner';
 import { HlmToasterComponent } from '@spartan-ng/ui-sonner-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { AppointmentDTO } from '@shared/dtos';
+import { AppointmentDialogRequestAppointmentsComponent } from './appointment-dialog-request-appointments';
 
 
 
@@ -37,7 +38,7 @@ import { AppointmentDTO } from '@shared/dtos';
     BrnSelectModule,
     HlmSelectModule,
     HlmToasterComponent, 
-    HlmButtonDirective
+    HlmButtonDirective,
   ],
   providers: [provideIcons({ lucideChevronDown, lucideCopy, lucideArrowUpDown })],
   templateUrl: './appointment-data-table.html',
@@ -45,11 +46,12 @@ import { AppointmentDTO } from '@shared/dtos';
 
 // TODO refactor this component to be generalizide for apointments
 export class AppointmentDataTableComponent {
+
   @Input() set data(newData: AppointmentDTO[]) {
     if (!newData || !Array.isArray(newData)) return;
 
     // Save selected requests before updating the data
-    const selectedAppointments = this.getSelectedAppointments()
+    const selectedAppointments = this._selected()
 
     // Sort the data by date, time, and location
     this.updateAppointmentsWithSorting(newData);
@@ -63,6 +65,7 @@ export class AppointmentDataTableComponent {
         this.toggleAppointment(appointment);
       }
     });
+    
   }
   
   private updateAppointmentsWithSorting(newData: AppointmentDTO[]) {
@@ -108,6 +111,12 @@ export class AppointmentDataTableComponent {
   protected readonly _selected = toSignal(this._selectionModel.changed.pipe(map((change) => change.source.selected)), {
     initialValue: [],
   });
+
+
+  private readonly $selected = toObservable(this._selected);
+  @Input() set onSelectedAppointments(onSelectedAppointments: (appointment: AppointmentDTO[]) => void) {
+    this.$selected.subscribe((selectedAppointments) => onSelectedAppointments(selectedAppointments));
+  }
 
   protected readonly _brnColumnManager = useBrnColumnManager({
     date: { visible: true, label: 'Date' },
@@ -173,7 +182,7 @@ export class AppointmentDataTableComponent {
     }
   }
 
-  showToast(element: AppointmentDTO) {
+  protected showToast(element: AppointmentDTO) {
     toast('Location Copied', {
       description: `Do you need directions?`,
       action: {
@@ -183,7 +192,10 @@ export class AppointmentDataTableComponent {
     });
   }
 
-  getSelectedAppointments(): AppointmentDTO[] {
-    return this._selected();
+  protected onAppointmentsRequested($event: AppointmentDTO[]) {
+    console.log('Appointments Requested:', $event);
   }
+
+
+
 }

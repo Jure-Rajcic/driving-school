@@ -58,6 +58,7 @@ import { AppointmentConfirmationDataTableComponent } from "src/app/components/ad
 import { FormsModule } from '@angular/forms';
 import { AppSvgComponent } from "src/app/components/app-svg-component";
 import { toObservable } from '@angular/core/rxjs-interop';
+import { AppointmentManagementDialogSaveChangesComponent } from "src/app/components/admin/appointment-management-dialog-save-changes";
 
 type Clinic = { label: string; value: string }
 
@@ -77,27 +78,14 @@ type Clinic = { label: string; value: string }
     HlmCardFooterDirective,
     HlmCardHeaderDirective,
     HlmCardTitleDirective,
-    HlmLabelDirective,
-    HlmInputDirective,
     HlmButtonDirective,
-    HlmIconComponent,
-    BrnAlertDialogTriggerDirective,
-    BrnAlertDialogContentDirective,
-    HlmAlertDialogComponent,
     BrnCommandImports,
     HlmCommandImports,
-    HlmIconComponent,
-    BrnPopoverComponent,
-    BrnPopoverTriggerDirective,
-    BrnPopoverContentDirective,
-    HlmPopoverContentDirective,
     HlmCardDirective,
     HlmCardHeaderDirective,
     HlmCardTitleDirective,
     HlmCardDescriptionDirective,
     HlmCardContentDirective,
-    HlmLabelDirective,
-    HlmInputDirective,
     HlmCardFooterDirective,
     HlmButtonDirective,
 
@@ -105,23 +93,15 @@ type Clinic = { label: string; value: string }
     AppointmentManagmentDataTableComponent,
     BrnCommandImports,
     HlmCommandImports,
-    HlmIconComponent,
-    BrnPopoverComponent,
-    BrnPopoverTriggerDirective,
-    BrnPopoverContentDirective,
-    HlmPopoverContentDirective,
     HlmCardDirective,
     HlmCardHeaderDirective,
     HlmCardTitleDirective,
     HlmCardDescriptionDirective,
     HlmCardContentDirective,
-    HlmLabelDirective,
-    HlmInputDirective,
     HlmCardFooterDirective,
     HlmButtonDirective,
-    HlmAlertDialogContentComponent,
     AppointmentConfirmationDataTableComponent,
-    AppSvgComponent,
+    AppointmentManagementDialogSaveChangesComponent,
   ],
   providers: [provideIcons({ lucidePlus, lucideCheck, lucideChevronDown })],
   templateUrl: './monitoring-view-1-medical-examination.component.html',
@@ -132,7 +112,7 @@ export class MonitoringViewMedicalExaminationComponent {
   private readonly appointmentManagmentService = inject(AppointmentManagementService);
   protected readonly appointments = this.appointmentManagmentService.appointments;
 
-  private locallyCreatedAppointments: AppointmentDTO[] = [];
+  protected locallyCreatedAppointments: AppointmentDTO[] = [];
 
   protected onAppointmentCreatedLocally(appointment: AppointmentDTO) {
     const newLocallyCreatedAppointments = [...this.locallyCreatedAppointments];
@@ -140,7 +120,7 @@ export class MonitoringViewMedicalExaminationComponent {
     this.updateLocallyAffectedAppointments(newLocallyCreatedAppointments, undefined);
   }
 
-  private locallyDeletedAppointments: AppointmentDTO[] = [];
+  protected locallyDeletedAppointments: AppointmentDTO[] = [];
 
   protected onAppointmentsDeletedLocally(appointments: AppointmentDTO[]) {
     const newLocallyDeletedAppointments = [...this.locallyDeletedAppointments];
@@ -173,16 +153,7 @@ export class MonitoringViewMedicalExaminationComponent {
   }
 
 
-  protected trySavingAppointmentManagementChanges() {
-    if (!this.IsSaveChangesEnabled()) {
-      alert('No changes to save');
-      return;
-    } else {
-      this.SaveChanges();
-    }
-  }
-
-  private SaveChanges() {
+  protected onSaveChanges($event: any) {
     this.locallyCreatedAppointments.forEach(appointment => {
       this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, appointment);
     });

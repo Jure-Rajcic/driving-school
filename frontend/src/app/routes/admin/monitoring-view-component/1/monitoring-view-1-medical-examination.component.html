@@ -29,11 +29,12 @@
           ></appointment-menagment-data-table>
         </p>
         <div hlmCardFooter class="justify-end">
-          <button hlmBtn 
-            [variant]="IsSaveChangesEnabled() ? 'default' : 'secondary'"
-            (click)="trySavingAppointmentManagementChanges()">
-            Save Changes
-          </button>
+          <appointment-management-dialog-save-changes
+            [locallyDeletedAppointments]="locallyDeletedAppointments"
+            [locallyCreatedAppointments]="locallyCreatedAppointments"
+            [IsSaveChangesEnabled]="IsSaveChangesEnabled()"
+            (onSaveChanges)="onSaveChanges($event)"
+          ></appointment-management-dialog-save-changes>
         </div>
       </section>
     </div>

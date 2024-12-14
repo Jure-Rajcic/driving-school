@@ -35,7 +35,6 @@ enum AppointmentDeletionMode {
     BrnAlertDialogContentDirective,
 
     HlmAlertDialogComponent,
-    HlmAlertDialogOverlayDirective,
     HlmAlertDialogHeaderComponent,
     HlmAlertDialogFooterComponent,
     HlmAlertDialogTitleDirective,

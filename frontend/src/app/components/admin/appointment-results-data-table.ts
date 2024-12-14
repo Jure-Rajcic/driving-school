@@ -1,18 +1,12 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  computed,
-  effect,
-  signal,
-} from '@angular/core';
+import { Component, Input, computed, effect, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   lucideArrowUpDown,
+  lucideBrainCircuit,
   lucideChevronDown,
+  lucideListChecks,
   lucideTrash2,
 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -49,13 +43,17 @@ import {
   HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { AppointmentDTO } from '@shared/dtos';
+import { AppointmentConfirmationDTO, AppointmentDTO } from '@shared/dtos';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
-import { AppointmentMenagmentDialogCreateAppointmentComponent } from './appointment-menagment-dialog-create-appointment';
-import { AppointmentMenagmentDialogDeleteAppointmentComponent } from './appointment-menagment-dialog-delete-appointment';
+
+// TODO provide more information about the user
+type RowData = {
+  appointment: AppointmentDTO;
+  userId: number;
+};
 
 @Component({
-  selector: 'appointment-menagment-data-table',
+  selector: 'appointment-confirmation-data-table',
   standalone: true,
   imports: [
     FormsModule,
@@ -67,6 +65,7 @@ import { AppointmentMenagmentDialogDeleteAppointmentComponent } from './appointm
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
+    HlmAlertDialogComponent,
     FormsModule,
     BrnMenuTriggerDirective,
     HlmMenuModule,
@@ -78,48 +77,71 @@ import { AppointmentMenagmentDialogDeleteAppointmentComponent } from './appointm
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
-    AppointmentMenagmentDialogCreateAppointmentComponent,
-    AppointmentMenagmentDialogDeleteAppointmentComponent,
   ],
   providers: [
-    provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown }),
+    provideIcons({
+      lucideChevronDown,
+      lucideTrash2,
+      lucideArrowUpDown,
+      lucideListChecks,
+    }),
   ],
-  templateUrl: './appointment-managment-data-table.html',
+  templateUrl: './appointment-results-data-table.html',
 })
-// TODO refactor this component to be generalizide for apointments
-export class AppointmentManagmentDataTableComponent {
-  @Input() set data(newData: AppointmentDTO[]) {
+export class AppointmentResultsDataTableComponent {
+  private readonly _data = signal<RowData[]>([]);
+
+  @Input() set data(newData: AppointmentConfirmationDTO[]) {
     if (!newData || !Array.isArray(newData)) return;
 
-    this.updateAppointmentsWithSorting(newData);
+    // Flatten the data into Row objects that include appointment and userId
+    const allRows: RowData[] = newData.flatMap((reqDto) =>
+      reqDto.appointments.map((appointment) => ({
+        appointment,
+        userId: reqDto.userId,
+      }))
+    );
 
-    // Remove deleted appointments from the data
-    this.deletedAppointments.forEach((deleted) => {
-      const index = this._data().findIndex((a) => a === deleted);
-      if (index !== -1) {
-        this._data().splice(index, 1);
+    // Save selected requests before updating the data
+    const selectedRequests = this.getSelectedAppointments();
+
+    // Sort the data by date, time, and location
+    this.updateAppointmentsWithSorting(allRows);
+
+    // Restore the selected requests
+    while (this._selected().length > 0)
+      this._selectionModel.deselect(this._selected()[0]);
+    selectedRequests.forEach((selectedRequest) => {
+      const row = this._data().find(
+        (row) => JSON.stringify(row) === JSON.stringify(selectedRequest)
+      );
+      if (row) {
+        this._selected().push(row);
+        this.toggleRow(row);
       }
     });
   }
 
-  private updateAppointmentsWithSorting(newData: AppointmentDTO[]) {
-    // Merge new data with the existing data and sort
-    const sortedData = newData.sort((a, b) => {
+  private updateAppointmentsWithSorting(newData: RowData[]) {
+    const sortedRows = newData.sort((rowA, rowB) => {
       // Compare by date
       const dateComparison =
-        new Date(a.date).getTime() - new Date(b.date).getTime();
+        new Date(rowA.appointment.date).getTime() -
+        new Date(rowB.appointment.date).getTime();
       if (dateComparison !== 0) return dateComparison;
 
-      // If dates are equal, compare by time
-      const timeComparison = this._compareTimes(a.time, b.time);
+      // Compare by time if dates are equal
+      const timeComparison = this._compareTimes(
+        rowA.appointment.time,
+        rowB.appointment.time
+      );
       if (timeComparison !== 0) return timeComparison;
 
-      // If time is also equal, compare by location name
-      return a.location.localeCompare(b.location);
+      // Compare by location if time is also equal
+      return rowA.appointment.location.localeCompare(rowB.appointment.location);
     });
 
-    // Update the signal with the sorted data
-    this._data.set(sortedData);
+    this._data.set(newData);
   }
 
   // Helper function to compare time strings (e.g., "10:00 AM")
@@ -134,7 +156,7 @@ export class AppointmentManagmentDataTableComponent {
   }
 
   protected readonly _rawFilterInput = signal('');
-  protected readonly _timeFilter = signal('');
+  protected readonly _appointmentFilter = signal('');
   private readonly _debouncedFilter = toSignal(
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
@@ -143,8 +165,8 @@ export class AppointmentManagmentDataTableComponent {
   protected readonly _availablePageSizes = [5, 10, 20, 10000];
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
-  private readonly _selectionModel = new SelectionModel<AppointmentDTO>(true);
-  protected readonly _isPaymentSelected = (row: AppointmentDTO) =>
+  private readonly _selectionModel = new SelectionModel<RowData>(true);
+  protected readonly _isRowSelected = (row: RowData) =>
     this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(
     this._selectionModel.changed.pipe(map((change) => change.source.selected)),
@@ -154,9 +176,8 @@ export class AppointmentManagmentDataTableComponent {
   );
 
   protected readonly _brnColumnManager = useBrnColumnManager({
-    date: { visible: true, label: 'Date' },
-    time: { visible: true, label: 'Time' },
-    location: { visible: true, label: 'Location' },
+    appointment: { visible: true, label: 'Appointment' },
+    user: { visible: true, label: 'User' },
   });
   protected readonly _allDisplayedColumns = computed(() => [
     'select',
@@ -164,43 +185,34 @@ export class AppointmentManagmentDataTableComponent {
     'actions',
   ]);
 
-  private readonly _data = signal(this.data ?? []);
   private readonly _filteredData = computed(() => {
-    const timeFilter = this._timeFilter()?.trim()?.toLowerCase();
-    if (timeFilter && timeFilter.length > 0) {
+    const appointmentFilter = this._appointmentFilter()?.trim()?.toLowerCase();
+    if (appointmentFilter && appointmentFilter.length > 0) {
       return this._data().filter((u) =>
-        u.time.toLowerCase().includes(timeFilter)
+        (
+          u.appointment.date +
+          ' ' +
+          u.appointment.time +
+          ' ' +
+          u.appointment.location
+        )
+          .toLowerCase()
+          .includes(appointmentFilter)
       );
     }
     return this._data();
   });
-  private readonly _timeSort = signal<'ASC' | 'DESC' | null>(null);
   protected readonly _filteredSortedPaginatedData = computed(() => {
-    const sort = this._timeSort();
     const start = this._displayedIndices().start;
     const end = this._displayedIndices().end + 1;
     const data = this._filteredData();
-    if (!sort) {
-      return data.slice(start, end);
-    }
-    return [...data]
-      .sort(
-        (p1, p2) => (sort === 'ASC' ? 1 : -1) * p1.time.localeCompare(p2.time)
-      )
-      .slice(start, end);
+    return [...data];
   });
   protected readonly _allFilteredPaginatedDataSelected = computed(() =>
     this._filteredSortedPaginatedData().every((row) =>
       this._selected().includes(row)
     )
   );
-  protected readonly _checkboxState = computed(() => {
-    const noneSelected = this._selected().length === 0;
-    const allSelectedOrIndeterminate = this._allFilteredPaginatedDataSelected()
-      ? true
-      : 'indeterminate';
-    return noneSelected ? false : allSelectedOrIndeterminate;
-  });
 
   protected readonly _totalElements = computed(
     () => this._filteredData().length
@@ -214,51 +226,54 @@ export class AppointmentManagmentDataTableComponent {
   constructor() {
     // needed to sync the debounced filter to the name filter, but being able to override the
     // filter when loading new users without debounce
-    effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), {
+    effect(() => this._appointmentFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });
   }
 
-  protected toggleRow(row: AppointmentDTO) {
+  protected toggleRow(row: RowData) {
     this._selectionModel.toggle(row);
-  }
-
-  protected handleHeaderCheckboxChange() {
-    const previousCbState = this._checkboxState();
-    if (previousCbState === 'indeterminate' || !previousCbState) {
-      this._selectionModel.select(...this._filteredSortedPaginatedData());
+    if (this._isRowSelected(row)) {
+      this._retainSelectedUserRequest(row);
     } else {
-      this._selectionModel.deselect(...this._filteredSortedPaginatedData());
+      this._restoreUserRequests(row);
     }
   }
 
-  protected getSelectedAppointments(): AppointmentDTO[] {
+  private readonly hiddenUserRequests: Map<number, RowData[]> = new Map();
+
+  private _retainSelectedUserRequest(selectedRequest: RowData) {
+    const allUserRequests = this._data().filter(
+      (row) => row.userId === selectedRequest.userId
+    );
+    this.hiddenUserRequests.set(
+      selectedRequest.userId,
+      allUserRequests.filter((row) => row !== selectedRequest)
+    );
+    const newData = this._data().filter(
+      (row) =>
+        this.hiddenUserRequests.get(selectedRequest.userId)!.indexOf(row) === -1
+    );
+    this.updateAppointmentsWithSorting(newData);
+  }
+
+  private _restoreUserRequests(deselectedRequest: RowData) {
+    const newData = this._data().concat(
+      this.hiddenUserRequests.get(deselectedRequest.userId)!
+    );
+    this.hiddenUserRequests.delete(deselectedRequest.userId);
+    this.updateAppointmentsWithSorting(newData);
+  }
+
+  getSelectedAppointments(): RowData[] {
     return this._selected();
   }
 
-
-  @Output()
-  readonly onAppointmentCreatedLocally = new EventEmitter<AppointmentDTO>();
-
-  public onAppointmentCreated(appointment: AppointmentDTO) {
-    const newAppointments = [...this._data(), appointment];
-    this.updateAppointmentsWithSorting(newAppointments);
-    this.onAppointmentCreatedLocally.emit(appointment);
+  saveChanges() {
+    console.log('Saving changes...', this.getSelectedAppointments());
   }
 
-  private readonly deletedAppointments: AppointmentDTO[] = [];
-
-  public deleteAppointment(appointment: AppointmentDTO) {
-    const newAppointments = this._data().filter((a) => a !== appointment);
-    this.deletedAppointments.push(appointment);
-    if (this._selectionModel.isSelected(appointment)) this._selectionModel.deselect(appointment);
-    this.updateAppointmentsWithSorting(newAppointments);
-  }
-  @Output()
-  readonly onAppointmentsDeletedLocally = new EventEmitter<AppointmentDTO[]>();
-
-  public onAppointmentsDeleted(appointments: AppointmentDTO[]) {
-    appointments.forEach((appointment) => this.deleteAppointment(appointment));
-    this.onAppointmentsDeletedLocally.emit(appointments);
+  deleteSelectedAppointments() {
+    console.log('Deleting appointments...', this.getSelectedAppointments());
   }
 }
