@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { SocketClientService } from './socket-client-service';
+import { SocketClientService } from '../socket-client-service';
 import { AppointmentDTO, AppointmentConfirmationDTO, ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, USER_REQUESTED_APPOINTMENTS, MEDICAL_EXAMINATION_ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS } from '@shared/dtos';
 import { filter } from 'rxjs';
 

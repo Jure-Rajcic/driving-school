@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { SocketClientService } from './socket-client-service';
+import { SocketClientService } from '../socket-client-service';
 import { ADMIN_ADDED_APPOINTMENT, ADMIN_REMOVED_APPOINTMENT, AppointmentDTO } from '@shared/dtos';
 
 @Injectable({
@@ -15,12 +15,12 @@ export class AppointmentManagementService {
         this.socketService.bindEventCallback(ADMIN_REMOVED_APPOINTMENT, this.handleAdminRemovedAppointment.bind(this));
     }
 
-    private addAppointment(appointment: AppointmentDTO) {
+    public addAppointment(appointment: AppointmentDTO) {
         console.log('Adding appointment:', appointment);
         this.appointments.set([...this.appointments(), appointment]);
     }
 
-    private deleteAppointment(appointment: AppointmentDTO) {
+    public deleteAppointment(appointment: AppointmentDTO) {
         console.log('Deleting appointment:', appointment);
         this.appointments.set(this.appointments().filter(a => a.id !== appointment.id));
     }

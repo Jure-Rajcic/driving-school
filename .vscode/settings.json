@@ -8,7 +8,7 @@
         "*.event.handler.ts":"Spwn",
     },
     "material-icon-theme.folders.associations": {
-    "user": "client",
+    "user": "robot",
     "sockets": "client",
     "features": "project",
 }

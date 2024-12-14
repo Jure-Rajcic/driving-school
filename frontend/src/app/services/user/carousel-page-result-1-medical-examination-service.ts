@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AppointmentConfirmationDTO, ADMIN_RECIVED_USER_REQUESTED_APPOINTMENTS, ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION } from '@shared/dtos';
-import { SocketClientService } from './socket-client-service';
+import { SocketClientService } from '../socket-client-service';
 
 
 interface AccordionItem {

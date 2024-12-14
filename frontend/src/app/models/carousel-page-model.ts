@@ -11,7 +11,7 @@ enum CarouselPageState { LOCKED, WIP, DONE }
 type CarouselPageType = {
     title: string;
     svgBaseFileName: string;
-    dialogs: CarouselPageItemDialogs;
+    dialogBox: CarouselPageItemDialogs;
     widgetMetaData: WidgetMetaDataType;
     resultComponent: Type<any>;
 };
@@ -25,7 +25,7 @@ const CAROUSEL_PAGE_CONTENT: { [key: number]: CarouselPageType }= {
     1: { 
         title: 'Medical Examination', 
         svgBaseFileName: '[1]medical-examination', 
-        dialogs: new MedicalExaminationItemDialogs(),
+        dialogBox: new MedicalExaminationItemDialogs(),
         widgetMetaData: {
             widget: MedicalExaminationContentComponent,
             inputs: { content: 'Medical examination to confirm your fitness for driving.' }
@@ -35,7 +35,7 @@ const CAROUSEL_PAGE_CONTENT: { [key: number]: CarouselPageType }= {
     2: { 
         title: 'Psycho Test', 
         svgBaseFileName: '[2]psycho-test', 
-        dialogs: new PsychoTestItemDialogs(),
+        dialogBox: new PsychoTestItemDialogs(),
         widgetMetaData: {
             widget: ButtonWidgetComponent,
             inputs: { label: 'Start Test', action: () => console.log('Start Test') }
@@ -68,7 +68,8 @@ class CarouselPageModel {
         this.id = id;
         this._state$ = new BehaviorSubject(state);
 
-        const { title, svgBaseFileName, dialogs: dialogBox, widgetMetaData, resultComponent } = CAROUSEL_PAGE_CONTENT[id];
+        const { title, svgBaseFileName, dialogBox, widgetMetaData, resultComponent } = CAROUSEL_PAGE_CONTENT[id];
+
         this.title = title;
         this.svgBaseFileName = svgBaseFileName;
         this.dialogBox = dialogBox;

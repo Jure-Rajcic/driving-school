@@ -1,15 +1,34 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, computed, effect, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+  effect,
+  signal,
+} from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { lucideArrowUpDown, lucideChevronDown, lucideTrash2 } from '@ng-icons/lucide';
+import {
+  lucideArrowUpDown,
+  lucideChevronDown,
+  lucideTrash2,
+} from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
-import { HlmCheckboxCheckIconComponent, HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
+import {
+  HlmCheckboxCheckIconComponent,
+  HlmCheckboxComponent,
+} from '@spartan-ng/ui-checkbox-helm';
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
 import { HlmMenuModule } from '@spartan-ng/ui-menu-helm';
-import { BrnTableModule, PaginatorState, useBrnColumnManager } from '@spartan-ng/ui-table-brain';
+import {
+  BrnTableModule,
+  PaginatorState,
+  useBrnColumnManager,
+} from '@spartan-ng/ui-table-brain';
 import { HlmTableModule } from '@spartan-ng/ui-table-helm';
 import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
@@ -32,6 +51,8 @@ import {
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { AppointmentDTO } from '@shared/dtos';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
+import { AppointmentMenagmentDialogCreateAppointmentComponent } from './appointment-menagment-dialog-create-appointment';
+import { AppointmentMenagmentDialogDeleteAppointmentComponent } from './appointment-menagment-dialog-delete-appointment';
 
 @Component({
   selector: 'appointment-menagment-data-table',
@@ -61,8 +82,12 @@ import { DecimalPipe, TitleCasePipe } from '@angular/common';
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
+    AppointmentMenagmentDialogCreateAppointmentComponent,
+    AppointmentMenagmentDialogDeleteAppointmentComponent,
   ],
-  providers: [provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown })],
+  providers: [
+    provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown }),
+  ],
   templateUrl: './appointment-managment-data-table.html',
 })
 // TODO refactor this component to be generalizide for apointments
@@ -85,7 +110,8 @@ export class AppointmentManagmentDataTableComponent {
     // Merge new data with the existing data and sort
     const sortedData = newData.sort((a, b) => {
       // Compare by date
-      const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+      const dateComparison =
+        new Date(a.date).getTime() - new Date(b.date).getTime();
       if (dateComparison !== 0) return dateComparison;
 
       // If dates are equal, compare by time
@@ -113,17 +139,23 @@ export class AppointmentManagmentDataTableComponent {
 
   protected readonly _rawFilterInput = signal('');
   protected readonly _timeFilter = signal('');
-  private readonly _debouncedFilter = toSignal(toObservable(this._rawFilterInput).pipe(debounceTime(300)));
+  private readonly _debouncedFilter = toSignal(
+    toObservable(this._rawFilterInput).pipe(debounceTime(300))
+  );
 
   private readonly _displayedIndices = signal({ start: 0, end: 0 });
   protected readonly _availablePageSizes = [5, 10, 20, 10000];
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
   private readonly _selectionModel = new SelectionModel<AppointmentDTO>(true);
-  protected readonly _isPaymentSelected = (row: AppointmentDTO) => this._selectionModel.isSelected(row);
-  protected readonly _selected = toSignal(this._selectionModel.changed.pipe(map((change) => change.source.selected)), {
-    initialValue: [],
-  });
+  protected readonly _isPaymentSelected = (row: AppointmentDTO) =>
+    this._selectionModel.isSelected(row);
+  protected readonly _selected = toSignal(
+    this._selectionModel.changed.pipe(map((change) => change.source.selected)),
+    {
+      initialValue: [],
+    }
+  );
 
   protected readonly _brnColumnManager = useBrnColumnManager({
     date: { visible: true, label: 'Date' },
@@ -140,7 +172,9 @@ export class AppointmentManagmentDataTableComponent {
   private readonly _filteredData = computed(() => {
     const timeFilter = this._timeFilter()?.trim()?.toLowerCase();
     if (timeFilter && timeFilter.length > 0) {
-      return this._data().filter((u) => u.time.toLowerCase().includes(timeFilter));
+      return this._data().filter((u) =>
+        u.time.toLowerCase().includes(timeFilter)
+      );
     }
     return this._data();
   });
@@ -154,26 +188,39 @@ export class AppointmentManagmentDataTableComponent {
       return data.slice(start, end);
     }
     return [...data]
-      .sort((p1, p2) => (sort === 'ASC' ? 1 : -1) * p1.time.localeCompare(p2.time))
+      .sort(
+        (p1, p2) => (sort === 'ASC' ? 1 : -1) * p1.time.localeCompare(p2.time)
+      )
       .slice(start, end);
   });
   protected readonly _allFilteredPaginatedDataSelected = computed(() =>
-    this._filteredSortedPaginatedData().every((row) => this._selected().includes(row)),
+    this._filteredSortedPaginatedData().every((row) =>
+      this._selected().includes(row)
+    )
   );
   protected readonly _checkboxState = computed(() => {
     const noneSelected = this._selected().length === 0;
-    const allSelectedOrIndeterminate = this._allFilteredPaginatedDataSelected() ? true : 'indeterminate';
+    const allSelectedOrIndeterminate = this._allFilteredPaginatedDataSelected()
+      ? true
+      : 'indeterminate';
     return noneSelected ? false : allSelectedOrIndeterminate;
   });
 
-  protected readonly _totalElements = computed(() => this._filteredData().length);
-  protected readonly _onStateChange = ({ startIndex, endIndex }: PaginatorState) =>
+  protected readonly _totalElements = computed(
+    () => this._filteredData().length
+  );
+  protected readonly _onStateChange = ({
+    startIndex,
+    endIndex,
+  }: PaginatorState) =>
     this._displayedIndices.set({ start: startIndex, end: endIndex });
 
   constructor() {
     // needed to sync the debounced filter to the name filter, but being able to override the
     // filter when loading new users without debounce
-    effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), { allowSignalWrites: true });
+    effect(() => this._timeFilter.set(this._debouncedFilter() ?? ''), {
+      allowSignalWrites: true,
+    });
   }
 
   protected toggleRow(row: AppointmentDTO) {
@@ -189,8 +236,18 @@ export class AppointmentManagmentDataTableComponent {
     }
   }
 
-  getSelectedAppointments(): AppointmentDTO[] {
+  protected getSelectedAppointments(): AppointmentDTO[] {
     return this._selected();
+  }
+
+
+  @Output()
+  readonly onAppointmentCreatedLocally = new EventEmitter<AppointmentDTO>();
+
+  public onAppointmentCreated(appointment: AppointmentDTO) {
+    const newAppointments = [...this._data(), appointment];
+    this.updateAppointmentsWithSorting(newAppointments);
+    this.onAppointmentCreatedLocally.emit(appointment);
   }
 
   private readonly deletedAppointments: AppointmentDTO[] = [];
@@ -200,5 +257,12 @@ export class AppointmentManagmentDataTableComponent {
     this.deletedAppointments.push(appointment);
     if (this._selectionModel.isSelected(appointment)) this._selectionModel.deselect(appointment);
     this.updateAppointmentsWithSorting(newAppointments);
+  }
+  @Output()
+  readonly onAppointmentsDeletedLocally = new EventEmitter<AppointmentDTO[]>();
+
+  public onAppointmentsDeleted(appointments: AppointmentDTO[]) {
+    appointments.forEach((appointment) => this.deleteAppointment(appointment));
+    this.onAppointmentsDeletedLocally.emit(appointments);
   }
 }

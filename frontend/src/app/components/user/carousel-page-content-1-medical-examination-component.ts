@@ -1,6 +1,6 @@
 import {  Component, inject, ViewChild } from "@angular/core";
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { AppointmentManagementService } from "../../services/1-medical-examination-admin-appointment-managment-service";
+import { AppointmentManagementService } from "../../services/client/1-medical-examination-appointment-managment-service";
 import {  hlmH3, hlmUl } from '../../../../libs/ui/ui-typography-helm/src/index';
 import { AppointmentDataTableComponent } from "./appointment-data-table";
 import { AppointmentConfirmationDTO, MEDICAL_EXAMINATION_USER_REQUESTED_APPOINTMENTS } from "@shared/dtos";

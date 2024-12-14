@@ -16,7 +16,7 @@ import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
 import { CarouselPageResultComponent } from 'src/app/components/user/carousel-page-result-component';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { hlmH1, hlmP } from '../../../../libs/ui/ui-typography-helm/src/index';
-import { AppointmentManagementService } from "src/app/services/1-medical-examination-admin-appointment-managment-service";
+import { AppointmentManagementService } from "src/app/services/client/1-medical-examination-appointment-managment-service";
 import {
   HlmAccordionContentComponent,
   HlmAccordionDirective,
@@ -24,7 +24,7 @@ import {
   HlmAccordionItemDirective,
   HlmAccordionTriggerDirective,
 } from '@spartan-ng/ui-accordion-helm';
-import { MedicalExaminationResultService } from "src/app/services/carousel-page-result-1-medical-examination-service";
+import { MedicalExaminationResultService } from "src/app/services/user/carousel-page-result-1-medical-examination-service";
 
 
 

@@ -1,6 +1,6 @@
 import { Component, inject, ViewChild } from "@angular/core";
 import { Observable } from "rxjs";
-import { AsyncPipe } from "@angular/common";
+import { AsyncPipe, NgClass } from "@angular/common";
 import { HlmBadgeDirective } from '@spartan-ng/ui-badge-helm';
 import {
   HlmCardContentDirective,
@@ -50,11 +50,14 @@ import {
 } from '@spartan-ng/ui-popover-brain';
 import { AppointmentManagmentDataTableComponent } from "src/app/components/admin/appointment-managment-data-table";
 import { hlmH1 } from "@spartan-ng/ui-typography-helm";
-import { AppointmentManagementService } from "src/app/services/1-medical-examination-admin-appointment-managment-service";
+import { AppointmentManagementService } from "src/app/services/client/1-medical-examination-appointment-managment-service";
 import { AcessToPsychologicalExaminationDTO, ADMIN_ADDED_APPOINTMENT, ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_REMOVED_APPOINTMENT, AppointmentConfirmationDTO, AppointmentDTO, MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, MEDICAL_EXAMINATION_ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, MEDICAL_EXAMINATION_ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, MEDICAL_EXAMINATION_ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, MEDICAL_EXAMINATION_ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, MEDICAL_EXAMINATION_ADMIN_REMOVED_APPOINTMENT } from "@shared/dtos";
 import { SocketClientService } from "src/app/services/socket-client-service";
-import { AppointmentConfirmationService } from "src/app/services/1-medical-examination-admin-appointment-confirmation-service";
+import { AppointmentConfirmationService } from "src/app/services/admin/1-medical-examination-appointment-confirmation-service";
 import { AppointmentConfirmationDataTableComponent } from "src/app/components/admin/appointment-confirmation-data-table";
+import { FormsModule } from '@angular/forms';
+import { AppSvgComponent } from "src/app/components/app-svg-component";
+import { toObservable } from '@angular/core/rxjs-interop';
 
 type Clinic = { label: string; value: string }
 
@@ -62,8 +65,8 @@ type Clinic = { label: string; value: string }
   selector: 'medical-examination-content',
   standalone: true,
   imports: [
-    AppointmentManagmentDataTableComponent, 
-    HlmButtonDirective, 
+    AppointmentManagmentDataTableComponent,
+    HlmButtonDirective,
     HlmTabsComponent,
     HlmTabsListComponent,
     HlmTabsTriggerDirective,
@@ -80,7 +83,6 @@ type Clinic = { label: string; value: string }
     HlmIconComponent,
     BrnAlertDialogTriggerDirective,
     BrnAlertDialogContentDirective,
-
     HlmAlertDialogComponent,
     BrnCommandImports,
     HlmCommandImports,
@@ -119,54 +121,101 @@ type Clinic = { label: string; value: string }
     HlmButtonDirective,
     HlmAlertDialogContentComponent,
     AppointmentConfirmationDataTableComponent,
+    AppSvgComponent,
   ],
-    providers: [provideIcons({ lucidePlus, lucideCheck, lucideChevronDown })],
-    templateUrl: './monitoring-view-1-medical-examination.component.html',
+  providers: [provideIcons({ lucidePlus, lucideCheck, lucideChevronDown })],
+  templateUrl: './monitoring-view-1-medical-examination.component.html',
 })
 export class MonitoringViewMedicalExaminationComponent {
 
   hlmH1 = hlmH1;
-  appointmentManagmentService = inject(AppointmentManagementService);
-  appointments = this.appointmentManagmentService.appointments;
+  private readonly appointmentManagmentService = inject(AppointmentManagementService);
+  protected readonly appointments = this.appointmentManagmentService.appointments;
 
-  public clinics = [
-    {
-      label: 'Clinic 1',
-      value: 'clinic-1'
-    },
-    {
-      label: 'Clinic 2',
-      value: 'clinic-2'
-    },
-    {
-      label: 'Clinic 3',
-      value: 'clinic-3'
-    },
-  ];
+  private locallyCreatedAppointments: AppointmentDTO[] = [];
 
-  public currentClinic = signal<Clinic | undefined>(undefined);
-  public state = signal<'closed' | 'open'>('closed');
-
-  stateChanged(state: 'open' | 'closed') {
-    this.state.set(state);
+  protected onAppointmentCreatedLocally(appointment: AppointmentDTO) {
+    const newLocallyCreatedAppointments = [...this.locallyCreatedAppointments];
+    newLocallyCreatedAppointments.push(appointment);
+    this.updateLocallyAffectedAppointments(newLocallyCreatedAppointments, undefined);
   }
 
-  commandSelected(framework: Clinic) {
-    this.state.set('closed');
-    if (this.currentClinic()?.value === framework.value) {
-      this.currentClinic.set(undefined);
+  private locallyDeletedAppointments: AppointmentDTO[] = [];
+
+  protected onAppointmentsDeletedLocally(appointments: AppointmentDTO[]) {
+    const newLocallyDeletedAppointments = [...this.locallyDeletedAppointments];
+    appointments.forEach(appointment => newLocallyDeletedAppointments.push(appointment));
+    this.updateLocallyAffectedAppointments(undefined, newLocallyDeletedAppointments);
+  }
+
+  protected readonly IsSaveChangesEnabled = signal(false);
+  private readonly appointments$ = toObservable(this.appointments);
+
+  private _ = this.appointments$.subscribe(appointments => {
+    const newLocallyCreatedAppointments = this.locallyCreatedAppointments.filter(appointment => !appointments.some(a => a.id === appointment.id));
+    const newLocallyDeletedAppointments = this.locallyDeletedAppointments.filter(appointment => appointments.some(a => a.id === appointment.id));
+    this.updateLocallyAffectedAppointments(newLocallyCreatedAppointments, newLocallyDeletedAppointments);
+  })
+
+  private updateLocallyAffectedAppointments(newLocallyCreatedAppointments: AppointmentDTO[] | undefined, newLocallyDeletedAppointments: AppointmentDTO[] | undefined) {
+    if (!newLocallyCreatedAppointments && !newLocallyDeletedAppointments) return;
+    if(newLocallyCreatedAppointments) this.locallyCreatedAppointments = newLocallyCreatedAppointments;
+    if(newLocallyDeletedAppointments) this.locallyDeletedAppointments = newLocallyDeletedAppointments;
+
+    const intersection = this.locallyCreatedAppointments.filter(appointment => this.locallyDeletedAppointments.some(a => a.id === appointment.id));
+    intersection.forEach(appointment => {
+      this.locallyCreatedAppointments = this.locallyCreatedAppointments.filter(a => a.id !== appointment.id);
+      this.locallyDeletedAppointments = this.locallyDeletedAppointments.filter(a => a.id !== appointment.id);
+    });
+
+    const SaveChangesEnabled = this.locallyCreatedAppointments.length > 0 || this.locallyDeletedAppointments.length > 0;
+    this.IsSaveChangesEnabled.set(SaveChangesEnabled);
+  }
+
+
+  protected trySavingAppointmentManagementChanges() {
+    if (!this.IsSaveChangesEnabled()) {
+      alert('No changes to save');
+      return;
     } else {
-      this.currentClinic.set(framework);
+      this.SaveChanges();
     }
   }
 
-  socketService = inject(SocketClientService);
+  private SaveChanges() {
+    this.locallyCreatedAppointments.forEach(appointment => {
+      this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, appointment);
+    });
+    this.locallyCreatedAppointments = [];
+    this.locallyDeletedAppointments.forEach(appointment => {
+      this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_REMOVED_APPOINTMENT, appointment);
+    });
+    this.locallyDeletedAppointments = [];
+    this.IsSaveChangesEnabled.set(false);
+  }
 
-  readonly demo1: AppointmentDTO = { id: 1, 'date': '2021-01-01', 'time': '12:00', 'location': 'New York'};
-  readonly demo2: AppointmentDTO = { id: 2, 'date': '2021-01-02', 'time': '12:20', 'location': 'New York2'};
+
+
+
+
+
+
+
+
+  /// TODO remove this
+  private readonly socketService = inject(SocketClientService);
+
+  readonly demo1: AppointmentDTO = { id: 1, 'date': '2021-01-01', 'time': '12:00', 'location': 'New York' };
+  readonly demo2: AppointmentDTO = { id: 2, 'date': '2021-01-02', 'time': '12:20', 'location': 'New York2' };
+  readonly demo3: AppointmentDTO = { id: 3, 'date': '2021-01-03', 'time': '12:40', 'location': 'New York3' };
+  readonly demo4: AppointmentDTO = { id: 4, 'date': '2021-01-04', 'time': '13:00', 'location': 'New York4' };
+  readonly demo5: AppointmentDTO = { id: 5, 'date': '2021-01-05', 'time': '13:20', 'location': 'New York5' };
   simulateAdminAddedAppointment() {
     this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, this.demo1);
     this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, this.demo2);
+    this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, this.demo3);
+    this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, this.demo4);
+    this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, this.demo5);
   }
 
   simulateAdminDeletedAppointment() {
@@ -180,7 +229,7 @@ export class MonitoringViewMedicalExaminationComponent {
 
   simulateAdminConfirmedAppointment() {
     const data: AppointmentConfirmationDTO = {
-      appointments: [ { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'} ],
+      appointments: [{ id: 5, date: '2021-01-01', time: '14:00', location: 'Chicago' }],
       userId: 1
     }
     this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, data)
@@ -188,7 +237,7 @@ export class MonitoringViewMedicalExaminationComponent {
 
   simulateAdminDeclinedAppointment() {
     const data: AppointmentConfirmationDTO = {
-      appointments: [ { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'} ],
+      appointments: [{ id: 5, date: '2021-01-01', time: '14:00', location: 'Chicago' }],
       userId: 1
     }
     this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, data)
