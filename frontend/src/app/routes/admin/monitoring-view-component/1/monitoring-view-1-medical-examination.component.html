@@ -1,136 +1,93 @@
-<div class="w-full max-w-5xl p-4 mx-auto border">
-    <hlm-tabs tab="manage-appointments" class="w-full">
-        <hlm-tabs-list class="w-full grid grid-cols-3" aria-label="tabs example">
-            <button hlmTabsTrigger="manage-appointments">Manage Appointments</button>
-            <button hlmTabsTrigger="confirm-appointments">Confirm Appointments</button>
-            <button hlmTabsTrigger="unlock-next-step">Unlock Next Step</button>
-        </hlm-tabs-list>
+<div class="w-full max-w-5xl mx-auto flex flex-col items-center gap-4 p-4">
+  <h1 class="{{ hlmH1 }}">Medical Examination</h1>
+  <hlm-tabs tab="manage-appointments" class="w-full">
+    <hlm-tabs-list class="w-full grid grid-cols-3" aria-label="tabs example">
+      <button hlmTabsTrigger="manage-appointments">Manage Appointments</button>
+      <button hlmTabsTrigger="confirm-appointments">
+        Confirm Appointments
+      </button>
+      <button hlmTabsTrigger="unlock-next-step">Appointments Results</button>
+    </hlm-tabs-list>
 
-        <div hlmTabsContent="manage-appointments">
-            <section hlmCard>
-                <div hlmCardHeader>
-                    <h3 hlmCardTitle>Manage Appointments</h3>
-                    <p hlmCardDescription>
-                        View and manage appointments for your clients. Below, you'll see the same appointments your
-                        clients can view.
-                        As an admin, you can delete an appointment using the delete icon or create a new one using the
-                        "+" icon.
-                        Remember to click "Save Changes" once you've made your updates.
-                    </p>
-                </div>
-                <p hlmCardContent>
-                    <appointment-component [data]="appointments()"></appointment-component>
-                </p>
-                <div hlmCardFooter class="justify-between">
-                    <button hlmBtn>Save Changes</button>
-
-                    <hlm-alert-dialog >
-                        <button hlmBtn brnAlertDialogTrigger size="icon"><hlm-icon size='sm' name="lucidePlus" /></button>
-                        <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" hlmCard>
-                            <div hlmCardHeader>
-                                <h3 hlmCardTitle>Create new appointment</h3>
-                                <p hlmCardDescription>Create new appointment in one-click.</p>
-                            </div>
-                            <p hlmCardContent>
-                                <label class="block" hlmLabel>
-                                    Date
-                                    <input class="mt-1.5 w-full" placeholder="Name of your project" hlmInput type="date"/>
-                                </label>
-                                <label class="block" hlmLabel>
-                                    Time
-                                    <input class="mt-1.5 w-full" placeholder="Name of your project" hlmInput type="time"/>
-                                </label>
-
-                                <label class="my-4 mb-1.5 block" hlmLabel>
-                                    Clinic
-
-                                    <brn-popover [state]="state()" (stateChanged)="stateChanged($event)" sideOffset="5"
-                                        closeDelay="100">
-                                        <button class="w-full mt-1.5 justify-between" id="edit-profile"
-                                            variant="outline" brnPopoverTrigger (click)="state.set('open')" hlmBtn>
-                                            {{ currentClinic() ? currentClinic()?.label : 'Select' }}
-                                            <hlm-icon size="sm" name="lucideChevronDown" />
-                                        </button>
-                                        <brn-cmd *brnPopoverContent="let ctx" hlmPopoverContent hlm
-                                            class="w-[270px] p-0">
-                                            <div *brnCmdEmpty hlmCmdEmpty>No results found.</div>
-                                            <brn-cmd-list hlm>
-                                                <brn-cmd-group hlm>
-                                                    @for (clinic of clinics;track clinic) {
-                                                    <button brnCmdItem [value]="clinic.value"
-                                                        (selected)="commandSelected(clinic)" hlm>
-                                                        <hlm-icon
-                                                            [class.opacity-0]="currentClinic()?.value !== clinic.value"
-                                                            name="lucideCheck" hlmCmdIcon />
-                                                        {{ clinic.label }}
-                                                    </button>
-                                                    }
-                                                </brn-cmd-group>
-                                            </brn-cmd-list>
-                                        </brn-cmd>
-                                    </brn-popover>
-                                </label>
-                            </p>
-                            <div hlmCardFooter class="justify-between">
-                                <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
-                                <button hlmBtn>Create</button>
-                            </div>
-                        </hlm-alert-dialog-content>
-                    </hlm-alert-dialog>
-
-
-
-                </div>
-            </section>
+    <div hlmTabsContent="manage-appointments">
+      <section hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Manage Appointments</h3>
+          <p hlmCardDescription>
+            View and manage appointments for your clients. Below, you'll see the
+            same appointments your clients can view. As an admin, you can delete
+            an appointment using the delete icon or create a new one using the
+            "+" button. Changes are shownd localy and once you are ready to
+            apply them, click "Save Changes".
+          </p>
         </div>
+        <p hlmCardContent>
+          <appointment-menagment-data-table
+            [data]="appointments()"
+            (saveChanges)="onSaveChanges($event)"
+          ></appointment-menagment-data-table>
+        </p>
+      </section>
+    </div>
 
-        <div hlmTabsContent="confirm-appointments">
-            <section hlmCard>
-                <div hlmCardHeader>
-                    <h3 hlmCardTitle>Confirm Appointments</h3>
-                    <p hlmCardDescription>
-                        Approve or decline appointments for your clients. Use the check icon to confirm an appointment
-                        or
-                        the cancel icon to decline it. The app will notify the client about your decision.
-                        Don't forget to click "Save Changes" to apply your updates.
-                    </p>
-                </div>
-                <p hlmCardContent>
-                    <appointment-component [data]="appointments()"></appointment-component>
-                </p>
-                <div hlmCardFooter>
-                    <button hlmBtn>Save Changes</button>
-                </div>
-            </section>
+    <div hlmTabsContent="confirm-appointments">
+      <section hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Confirm Appointments</h3>
+          <p hlmCardDescription>
+            Approve or decline appointments for your clients. Use the check icon
+            to confirm an appointment or the cancel icon to decline it. The app
+            will notify the client about your decision. Don't forget to click
+            "Save Changes" to apply your updates.
+          </p>
         </div>
+        <p hlmCardContent>
+          <appointment-confirmation-data-table
+            [data]="appointmentConfirmationRequests()"
+            (confirmationAccepted)="onConfirmationAccepted($event)"
+            (confirmationRejected)="onConfirmationRejected($event)"
+          ></appointment-confirmation-data-table>
+        </p>
+      </section>
+    </div>
 
-        <div hlmTabsContent="unlock-next-step">
-            <section hlmCard>
-                <div hlmCardHeader>
-                    <h3 hlmCardTitle>Unlock Next Step</h3>
-                    <p hlmCardDescription>
-                        After your clients have attended their appointment, you will receive a confirmation email from
-                        the clinic.
-                        Verify that everything is in order, then unlock the next step for your clients.
-                        Click "Save Changes" once you are ready to proceed.
-                    </p>
-                </div>
-                <p hlmCardContent>
-                    <appointment-component [data]="appointments()"></appointment-component>
-                </p>
-                <div hlmCardFooter>
-                    <button hlmBtn>Save Changes</button>
-                </div>
-            </section>
+    <div hlmTabsContent="unlock-next-step">
+      <section hlmCard>
+        <div hlmCardHeader>
+          <h3 hlmCardTitle>Unlock Next Step</h3>
+          <p hlmCardDescription>
+            After your clients have attended their appointment, you will receive
+            a confirmation email from the clinic. Verify that everything is in
+            order, then unlock the next step for your clients. Click "Save
+            Changes" once you are ready to proceed.
+          </p>
         </div>
-    </hlm-tabs>
-</div> 
+        <p hlmCardContent>
+          <appointment-result-data-table
+            [data]="appointmentResults()"
+            (accessGranted)="onAccessGranted($event)"
+            (accessDenied)="onAccessDenied($event)"
+          ></appointment-result-data-table>
+        </p>
+      </section>
+    </div>
+  </hlm-tabs>
+</div>
 
+<div class="flex flex-col gap-2 p-2 bg-blue-100">
 
+  <!-- 
+  <button (click)="simulateAdminConfirmedAppointment()">
+    Simulate Admin Confirmed Appointment
+  </button>
+  <button (click)="simulateAdminDeclinedAppointment()">
+    Simulate Admin Declined Appointment
+  </button>
 
-<button (click)="simulateAdminAddedAppointment()">Simulate Admin Added Appointment</button>
-<!-- <button (click)="simulateAdminDeletedAppointment()">Simulate Admin Deleted Appointment</button> -->
-<!-- <button (click)="simulateClientSendAppointmentConfirmationReq()">Simulate Client Send Appointment Confirmation Request</button> -->
-<!-- <button (click)="simulateAdminConfirmedAppointment()">Simulate Admin Confirmed Appointment</button> -->
-<!-- <button (click)="simulateAdminDeclinedAppointment()">Simulate Admin Declined Appointment</button> -->
-<!-- <button (click)="simulateAdminUnlockedNextStep()">Simulate Admin Unlocked Next Step</button> -->
+  <button (click)="simulateAdminGrantedAccesToPsychologicalExamination()">
+    Simulate Admin Granted Access To Psychological Examination
+  </button>
+  <button (click)="simulateAdminDeniedAccesToPsychologicalExamination()">
+    Simulate Admin Denied Access To Psychological Examination
+  </button> -->
+</div>

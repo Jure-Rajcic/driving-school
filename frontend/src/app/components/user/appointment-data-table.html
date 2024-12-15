@@ -1,0 +1,57 @@
+<div class="w-full">
+  <div class="flex flex-col justify-between gap-4 sm:flex-row">
+    <input hlmInput class="w-full md:w-80" placeholder="Filter times..." [ngModel]="_timeFilter()"
+      (ngModelChange)="_rawFilterInput.set($event)" />
+  </div>
+
+  <brn-table hlm stickyHeader class="border-border mt-4 block h-[335px] overflow-auto rounded-md border"
+    [dataSource]="_filteredSortedPaginatedData()" [displayedColumns]="_allDisplayedColumns()">
+    <brn-column-def name="select" class="w-12">
+      <hlm-th *brnHeaderDef>
+        <hlm-checkbox [checked]="_checkboxState()" (changed)="handleHeaderCheckboxChange()" />
+      </hlm-th>
+      <hlm-td *brnCellDef="let element">
+        <hlm-checkbox [checked]="_isAppointmentSelected(element)" (changed)="toggleAppointment(element)" />
+      </hlm-td>
+    </brn-column-def>
+
+    <brn-column-def name="date" class="flex-1">
+      <hlm-th truncate *brnHeaderDef>Date</hlm-th>
+      <hlm-td truncate *brnCellDef="let element"> {{ element.date }} </hlm-td>
+    </brn-column-def>
+
+    <brn-column-def name="time" class="flex-1">
+      <hlm-th truncate *brnHeaderDef>Time</hlm-th>
+      <hlm-td truncate *brnCellDef="let element"> {{ element.time }} </hlm-td>
+    </brn-column-def>
+
+    <brn-column-def name="location" class="flex-1">
+      <hlm-th truncate *brnHeaderDef>Location</hlm-th>
+      <hlm-td truncate *brnCellDef="let element">
+        {{ element.location }}
+      </hlm-td>
+    </brn-column-def>
+
+    <brn-column-def name="actions" class="w-16">
+      <hlm-th *brnHeaderDef></hlm-th>
+      <hlm-td *brnCellDef="let element">
+        <hlm-toaster />
+        <button hlmBtn variant="ghost" class="h-6 w-6 p-0.5" align="end" (click)="showToast(element)">
+          <hlm-icon class="w-4 h-4" name="lucideCopy" />
+        </button>
+      </hlm-td>
+    </brn-column-def>
+    <div class="flex items-center justify-center p-20 text-muted-foreground" brnNoDataRow>
+      No data
+    </div>
+  </brn-table>
+  <div class="flex flex-col md:flex-row justify-between mt-4 sm:flex-row sm:items-center"
+    *brnPaginator="let ctx; totalElements: _totalElements(); pageSize: _pageSize(); onStateChange: _onStateChange">
+    <span class="text-sm text-muted-foreground text-sm">{{ _selected().length }} of {{ _totalElements() }} row(s) selected</span>
+  <appointment-dialog-request-appointments 
+    class="w-full md:w-80 mt-2 md:mt-0"
+    [selectedAppointments]="_selected()"
+    (onAppointmentsRequested)="onAppointmentsRequested($event)">
+  </appointment-dialog-request-appointments>
+  </div>
+</div>

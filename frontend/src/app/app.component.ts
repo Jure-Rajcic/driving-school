@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import * as Shared from '@shared/dtos';
+console.log('All constants:', Shared);
 
 @Component({
   selector: 'app-root',

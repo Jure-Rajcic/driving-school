@@ -18,6 +18,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@shared/dtos": [".yalc/@shared/dtos/dist"],
+      
       "@spartan-ng/ui-typography-helm": [
         "libs/ui/ui-typography-helm/src/index.ts"
       ],

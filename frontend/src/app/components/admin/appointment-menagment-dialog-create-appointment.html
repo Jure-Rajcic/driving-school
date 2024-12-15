@@ -1,0 +1,87 @@
+<hlm-alert-dialog>
+  <button hlmBtn brnAlertDialogTrigger size="icon">
+    <hlm-icon size="sm" name="lucidePlus" />
+  </button>
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Create new appointment</h3>
+      <p hlmCardDescription>Create new appointment in one-click.</p>
+    </div>
+    <p hlmCardContent>
+      <label class="block" hlmLabel>
+        Date
+        <input
+          class="mt-1.5 w-full"
+          placeholder="Name of your project"
+          hlmInput
+          type="date"
+          [(ngModel)]="appointmentDate"
+        />
+      </label>
+      <label class="block" hlmLabel>
+        Time
+        <input
+          class="mt-1.5 w-full"
+          placeholder="Name of your project"
+          hlmInput
+          type="time"
+          [(ngModel)]="appointmentTime"
+        />
+      </label>
+      <label class="my-4 mb-1.5 block" hlmLabel>
+        Clinic
+        <brn-popover
+          [state]="clinicPopoverState()"
+          (stateChanged)="stateChanged($event)"
+          sideOffset="5"
+          closeDelay="100"
+        >
+          <button
+            class="w-full mt-1.5 justify-between"
+            id="edit-profile"
+            variant="outline"
+            brnPopoverTrigger
+            (click)="clinicPopoverState.set(PopoverStateEnum.Open)"
+            hlmBtn
+          >
+            {{ selectedClinic() ? selectedClinic()?.label : 'Select' }}
+            <hlm-icon size="sm" name="lucideChevronDown" />
+          </button>
+          <brn-cmd
+            *brnPopoverContent="let ctx"
+            hlmPopoverContent
+            hlm
+            class="w-[270px] p-0"
+          >
+            <div *brnCmdEmpty hlmCmdEmpty>No results found.</div>
+            <brn-cmd-list hlm>
+              <brn-cmd-group hlm>
+                @for (clinic of clinicPopoverOptions; track clinic) {
+                <button
+                  brnCmdItem
+                  [value]="clinic.value"
+                  (selected)="popoverOptionSelected(clinic)"
+                  hlm
+                >
+                  <hlm-icon
+                    [class.opacity-0]="selectedClinic()?.value !== clinic.value"
+                    name="lucideCheck"
+                    hlmCmdIcon
+                  />
+                  {{ clinic.label }}
+                </button>
+                }
+              </brn-cmd-group>
+            </brn-cmd-list>
+          </brn-cmd>
+        </brn-popover>
+      </label>
+    </p>
+    <div hlmCardFooter class="justify-between">
+      <button hlmBtn variant="ghost" (click)="ctx.close()">Cancel</button>
+      <button hlmBtn (click)="tryCreateAppointmentLoccaly() && ctx.close()">
+        Publish
+      </button>
+    </div>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

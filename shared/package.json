@@ -1,14 +1,12 @@
 {
   "name": "@shared/dtos",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc && npm link @shared/dtos",
-    "clean": "rm -rf dist"
-  },
-  "dependencies": {},
+  "version": "1.0.8",
+  "main": "index.js", 
   "devDependencies": {
     "typescript": "^5.x"
+  },
+  "scripts": {
+    "update:shared": "tsc && yalc publish && cd ../frontend && yalc add @shared/dtos && cd ../backend && yalc add @shared/dtos",
+    "help": "echo 'If experiencing problems, update package.json version and run npm run update:shared'"
   }
 }

@@ -1,0 +1,29 @@
+<hlm-alert-dialog>
+  <button *ngIf="(_nCreated() || _nDeleted()); else nothingToSave" hlmBtn brnAlertDialogTrigger variant='default'>
+    Save Changes
+  </button>
+  <ng-template #nothingToSave>
+    <button hlmBtn variant="secondary">
+      Nothing to save
+    </button>
+  </ng-template>
+
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-alert-dialog-header>
+      <h3 hlmAlertDialogTitle>Saving changes</h3>
+      <p hlmAlertDialogDescription>
+        Are you absolutly shure you want to procede with this information, waht
+        you see on menagment apointmnts iw what your user will see after you
+        click Save changes, you are deleting
+        {{_nDeleted()}} appointments adn you created
+        {{_nCreated()}} appointments
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction (click)="trySavingAppointmentManagementChanges() && ctx.close()">
+        Save
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
