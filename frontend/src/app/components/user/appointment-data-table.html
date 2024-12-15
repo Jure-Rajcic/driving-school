@@ -45,9 +45,13 @@
       No data
     </div>
   </brn-table>
-  <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center"
+  <div class="flex flex-col md:flex-row justify-between mt-4 sm:flex-row sm:items-center"
     *brnPaginator="let ctx; totalElements: _totalElements(); pageSize: _pageSize(); onStateChange: _onStateChange">
-    <span class="text-sm text-muted-foreground text-sm">{{ _selected().length }} of {{ _totalElements() }} row(s)
-      selected</span>
+    <span class="text-sm text-muted-foreground text-sm">{{ _selected().length }} of {{ _totalElements() }} row(s) selected</span>
+  <appointment-dialog-request-appointments 
+    class="w-full md:w-80 mt-2 md:mt-0"
+    [selectedAppointments]="_selected()"
+    (onAppointmentsRequested)="onAppointmentsRequested($event)">
+  </appointment-dialog-request-appointments>
   </div>
 </div>

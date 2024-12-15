@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { AppointmentConfirmationDTO, ADMIN_RECIVED_USER_REQUESTED_APPOINTMENTS, ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION } from '@shared/dtos';
+import { AppointmentConfirmationDTO, ADMIN_RECIVED_USER_REQUESTED_APPOINTMENTS, ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, ADMIN_ADDED_APPOINTMENT, ADMIN_REMOVED_APPOINTMENT, AppointmentDTO } from '@shared/dtos';
 import { SocketClientService } from '../socket-client-service';
 
 
@@ -11,7 +11,7 @@ interface AccordionItem {
 @Injectable({
     providedIn: 'root',
 })
-export class MedicalExaminationResultService {
+export class UserMedicalExaminationService {
 
     private readonly socketService = inject(SocketClientService);
     //TODO better sentences
@@ -38,15 +38,44 @@ export class MedicalExaminationResultService {
             state: false,
         }
     ];
-    readonly accordionItems = signal(this._accordionStates);
 
     constructor() {
+        this.socketService.bindEventCallback(ADMIN_ADDED_APPOINTMENT, this.handleAdminAddedAppointment.bind(this));
+        this.socketService.bindEventCallback(ADMIN_REMOVED_APPOINTMENT, this.handleAdminRemovedAppointment.bind(this));
         this.socketService.bindEventCallback(ADMIN_RECIVED_USER_REQUESTED_APPOINTMENTS, this.handleAdminReceivedUserRequestedAppointments.bind(this));
         this.socketService.bindEventCallback(ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, this.handleAdminConfirmedOneOfUserRequestedAppointments.bind(this));
         this.socketService.bindEventCallback(ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, this.handleAdminRejectedAllOfUserRequestedAppointments.bind(this));
         this.socketService.bindEventCallback(ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, this.handleAdminGrantedAccessToPsychologicalExamination.bind(this));
         this.socketService.bindEventCallback(ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, this.handleAdminDeniedAccessToPsychologicalExamination.bind(this));
     }
+
+
+    // **** FEATURE 1 ****
+    readonly appointments = signal<AppointmentDTO[]>([]);
+
+    public addAppointment(appointment: AppointmentDTO) {
+        console.log('Adding appointment:', appointment);
+        this.appointments.set([...this.appointments(), appointment]);
+    }
+
+    public deleteAppointment(appointment: AppointmentDTO) {
+        console.log('Deleting appointment:', appointment);
+        console.log('Appointments:', this.appointments());  
+        this.appointments.set(this.appointments().filter(a => JSON.stringify(a) !== JSON.stringify(appointment)));
+    }
+
+    private handleAdminAddedAppointment(data: AppointmentDTO): void {
+        this.addAppointment(data);
+    }
+
+    private handleAdminRemovedAppointment(data: AppointmentDTO): void {
+        this.deleteAppointment(data);
+    }
+
+
+    // **** FEATURE 2 ****
+
+    readonly accordionItems = signal(this._accordionStates);
 
     private setAccordionState(index: number, state: boolean): void {
         const updatedAccordionItems = [...this.accordionItems()];

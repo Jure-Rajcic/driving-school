@@ -1,22 +1,9 @@
-import { Component, effect, inject, signal, ViewChild } from "@angular/core";
-import { Observable } from "rxjs";
-import { AsyncPipe, CommonModule } from "@angular/common";
-import { HlmCarouselComponent, HlmCarouselContentComponent, HlmCarouselItemComponent, HlmCarouselNextComponent, HlmCarouselPreviousComponent } from '@spartan-ng/ui-carousel-helm';
+import { Component, inject,  } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { provideIcons } from '@ng-icons/core';
-import { lucideBell, lucideCheck, lucideCircleX, lucideCheckCheck, lucideCircleCheckBig, lucideLockKeyhole, lucideMenu } from '@ng-icons/lucide';
-import { HlmCardDirective } from '@spartan-ng/ui-card-helm';
+import { lucideCircleX, lucideCheckCheck, lucideCircleCheckBig } from '@ng-icons/lucide';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
-import { CarouselPageItemComponent } from 'src/app/components/user/carousel-page-item-component';
-import { CarouselPageModel, CarouselPageState } from 'src/app/models/carousel-page-model';
-
-import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
-import { CarouselPageContentComponent } from 'src/app/components/user/carousel-page-content-component';
-import { ParagraphWidgetComponent } from 'src/app/widgets/paragraph-widget';
-import { ButtonWidgetComponent } from 'src/app/widgets/button-widget';
-import { CarouselPageResultComponent } from 'src/app/components/user/carousel-page-result-component';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { hlmH1, hlmP } from '../../../../libs/ui/ui-typography-helm/src/index';
-import { AppointmentManagementService } from "src/app/services/client/1-medical-examination-appointment-managment-service";
 import {
   HlmAccordionContentComponent,
   HlmAccordionDirective,
@@ -24,7 +11,7 @@ import {
   HlmAccordionItemDirective,
   HlmAccordionTriggerDirective,
 } from '@spartan-ng/ui-accordion-helm';
-import { MedicalExaminationResultService } from "src/app/services/user/carousel-page-result-1-medical-examination-service";
+import { UserMedicalExaminationService } from "src/app/services/user/1-medical-examination-service";
 
 
 
@@ -49,20 +36,7 @@ import { MedicalExaminationResultService } from "src/app/services/user/carousel-
 
 export class MedicalExaminationResultComponent {
 
-
-
-  // constructor() {
-  //   // Simulate a state change after 2 seconds (example)
-  //   setTimeout(() => {
-  //     this.toggleAccordionState(0);
-  //   }, 2000);
-  // }
-
-  // A method to toggle the state of an accordion item by index
-
-
-  private readonly service = inject(MedicalExaminationResultService);
+  private readonly service = inject(UserMedicalExaminationService);
   readonly accordionItems = this.service.accordionItems;
-
 
 }

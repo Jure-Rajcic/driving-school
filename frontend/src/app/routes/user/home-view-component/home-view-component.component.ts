@@ -1,10 +1,23 @@
 import { Component, inject, model, Type, ViewChild } from '@angular/core';
-import { HlmCarouselComponent, HlmCarouselContentComponent, HlmCarouselItemComponent } from '@spartan-ng/ui-carousel-helm';
+import {
+  HlmCarouselComponent,
+  HlmCarouselContentComponent,
+  HlmCarouselItemComponent,
+} from '@spartan-ng/ui-carousel-helm';
 import { hlmH1 } from './../../../../../libs/ui/ui-typography-helm/src/index';
 import { provideIcons } from '@ng-icons/core';
-import { lucideBell, lucideCheck, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole } from '@ng-icons/lucide';
+import {
+  lucideBell,
+  lucideCheck,
+  lucideInfo,
+  lucideCircleCheckBig,
+  lucideLockKeyhole,
+} from '@ng-icons/lucide';
 import { HlmCardDirective } from '@spartan-ng/ui-card-helm';
-import { CarouselPageModel, CarouselPageState } from 'src/app/models/carousel-page-model';
+import {
+  CarouselPageModel,
+  CarouselPageState,
+} from 'src/app/models/carousel-page-model';
 
 import { CarouselPageContentComponent } from 'src/app/components/user/carousel-page-content-component';
 import { CarouselPageResultComponent } from 'src/app/components/user/carousel-page-result-component';
@@ -24,9 +37,14 @@ import { CarouselPageItemComponent } from 'src/app/components/user/carousel-page
     CarouselPageResultComponent,
   ],
   providers: [
-    provideIcons({ lucideCheck, lucideBell, lucideInfo, lucideCircleCheckBig, lucideLockKeyhole }),
+    provideIcons({
+      lucideCheck,
+      lucideBell,
+      lucideInfo,
+      lucideCircleCheckBig,
+      lucideLockKeyhole,
+    }),
   ],
-
 })
 export class HomeViewComponentComponent {
   hlmH1 = hlmH1;
@@ -47,14 +65,16 @@ export class HomeViewComponentComponent {
 
   @ViewChild(HlmCarouselComponent) carousel!: HlmCarouselComponent;
 
-  getInputs: Record<string, any> = { content: 'Medical examination to confirm your fitness for driving.' };
+  getInputs: Record<string, any> = {
+    content: 'Medical examination to confirm your fitness for driving.',
+  };
 
   ngAfterViewInit() {
-
     this.scrollTo(this.models.indexOf(this.currentModel));
 
     this.carousel.emblaCarousel?.emblaChange.subscribe((_) => {
-      const currentIndex = this.carousel.emblaCarousel?.emblaApi?.selectedScrollSnap();
+      const currentIndex =
+        this.carousel.emblaCarousel?.emblaApi?.selectedScrollSnap();
       if (currentIndex !== undefined) {
         this.currentModel = this.models[currentIndex];
       }
@@ -90,5 +110,4 @@ export class HomeViewComponentComponent {
   //   //   this.currentWidgetInputs = { label: 'Click me', action: () => alert('Button clicked!') };
   //   // }
   // }
-
 }

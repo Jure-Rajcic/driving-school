@@ -1,8 +1,9 @@
+
 <hlm-alert-dialog>
-  <button *ngIf="IsRequestAppointmentsEnabled()" hlmBtn brnAlertDialogTrigger variant='default'>
+  <button *ngIf="IsRequestAppointmentsEnabled()" hlmBtn brnAlertDialogTrigger variant='default' class="w-full">
     Request Selected Appointments
   </button>
-  <button *ngIf="!IsRequestAppointmentsEnabled()" hlmBtn variant='secondary'>
+  <button *ngIf="!IsRequestAppointmentsEnabled()" hlmBtn variant='secondary' class="w-full">
     select from {{appointmentsSelectionLowerLimit}} up to {{appointmentsSelectionUpperLimit}} appointments
   </button>
 

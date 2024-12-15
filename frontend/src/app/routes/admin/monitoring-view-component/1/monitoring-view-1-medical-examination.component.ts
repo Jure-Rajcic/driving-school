@@ -23,7 +23,6 @@ import {
   AppointmentManagmentDataTableComponent,
 } from 'src/app/components/admin/appointment-managment-data-table';
 import { hlmH1 } from '@spartan-ng/ui-typography-helm';
-import { AppointmentManagementService } from 'src/app/services/client/1-medical-examination-appointment-managment-service';
 import {
   AppointmentsResultsDTO,
   AppointmentConfirmationDTO,
@@ -36,7 +35,7 @@ import {
   MEDICAL_EXAMINATION_ADMIN_REMOVED_APPOINTMENT,
 } from '@shared/dtos';
 import { SocketClientService } from 'src/app/services/socket-client-service';
-import { AppointmentConfirmationService } from 'src/app/services/admin/1-medical-examination-appointment-confirmation-service';
+import { AdminMedicalExaminationService } from 'src/app/services/admin/1-medical-examination-service';
 import { AppointmentConfirmationDataTableComponent } from 'src/app/components/admin/appointment-confirmation-data-table';
 import { AppointmentManagementDialogSaveChangesComponent } from 'src/app/components/admin/appointment-management-dialog-save-changes';
 import { AppointmentResultsDataTableComponent } from 'src/app/components/admin/appointment-results-data-table';
@@ -79,25 +78,24 @@ import { AppointmentResultsDataTableComponent } from 'src/app/components/admin/a
 })
 export class MonitoringViewMedicalExaminationComponent {
   hlmH1 = hlmH1;
-  private readonly appointmentManagementService = inject(AppointmentManagementService);
-  protected readonly appointments = this.appointmentManagementService.appointments;
+  private readonly adminService = inject(AdminMedicalExaminationService);
+  private readonly socketService = inject(SocketClientService);
+
 
   // **** (1) Appointment Management ****
+  protected readonly appointments = this.adminService.appointments;
+
   onSaveChanges($event: AppointmentChanges) {
     const { createdAppointments, deletedAppointments } = $event;
     createdAppointments.forEach((appointment) => { this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_ADDED_APPOINTMENT, appointment)});
     deletedAppointments.forEach((appointment) => {this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_REMOVED_APPOINTMENT, appointment)});
   }
 
-  private readonly socketService = inject(SocketClientService);
 
   // **** (2) Appointment Confirmation ****
 
-  protected readonly confirmationAppointmentService = inject(
-    AppointmentConfirmationService
-  );
-  protected readonly appointmentConfirmationRequests = this.confirmationAppointmentService.appointmentConfirmationRequests;
-  protected readonly appointmentResults = this.confirmationAppointmentService.appointmentResults;
+  protected readonly appointmentConfirmationRequests = this.adminService.appointmentConfirmationRequests;
+  protected readonly appointmentResults = this.adminService.appointmentResults;
 
   public onConfirmationAccepted(data: AppointmentConfirmationDTO[]) {
     data.forEach((e) => this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, e));
@@ -107,31 +105,8 @@ export class MonitoringViewMedicalExaminationComponent {
     data.forEach((e) => this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, e));
   }
 
-  // simulateAdminConfirmedAppointment() {
-  //   const data: AppointmentConfirmationDTO = {
-  //     appointments: [
-  //       { id: 5, date: '2021-01-01', time: '14:00', location: 'Chicago' },
-  //     ],
-  //     userId: 1,
-  //   };
-  //   this.socketService.sendSocketEvent(
-  //     MEDICAL_EXAMINATION_ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS,
-  //     data
-  //   );
-  // }
+  // **** (3) Appointment Results ****
 
-  // simulateAdminDeclinedAppointment() {
-  //   const data: AppointmentConfirmationDTO = {
-  //     appointments: [
-  //       { id: 5, date: '2021-01-01', time: '14:00', location: 'Chicago' },
-  //     ],
-  //     userId: 1,
-  //   };
-  //   this.socketService.sendSocketEvent(
-  //     MEDICAL_EXAMINATION_ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS,
-  //     data
-  //   );
-  // }
 
   simulateAdminGrantedAccesToPsychologicalExamination() {
     const data: AppointmentsResultsDTO = {
