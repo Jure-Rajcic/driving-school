@@ -41,7 +41,7 @@ export class MedicalExaminationResultService {
     readonly accordionItems = signal(this._accordionStates);
 
     constructor() {
-        this.socketService.bindEventCallback(ADMIN_RECIVED_USER_REQUESTED_APPOINTMENTS, this.handleAdminRecivedUserRequestedAppointments.bind(this));
+        this.socketService.bindEventCallback(ADMIN_RECIVED_USER_REQUESTED_APPOINTMENTS, this.handleAdminReceivedUserRequestedAppointments.bind(this));
         this.socketService.bindEventCallback(ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS, this.handleAdminConfirmedOneOfUserRequestedAppointments.bind(this));
         this.socketService.bindEventCallback(ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS, this.handleAdminRejectedAllOfUserRequestedAppointments.bind(this));
         this.socketService.bindEventCallback(ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, this.handleAdminGrantedAccessToPsychologicalExamination.bind(this));
@@ -54,7 +54,7 @@ export class MedicalExaminationResultService {
         this.accordionItems.set(updatedAccordionItems);
     }
 
-    private handleAdminRecivedUserRequestedAppointments(data: AppointmentConfirmationDTO): void {
+    private handleAdminReceivedUserRequestedAppointments(data: AppointmentConfirmationDTO): void {
         console.log('Appointment request received:', data);
         this.setAccordionState(0, true);
     }

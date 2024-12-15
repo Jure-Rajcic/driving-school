@@ -1,13 +1,17 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, computed, effect, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, computed, effect, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   lucideArrowUpDown,
   lucideBrainCircuit,
   lucideChevronDown,
+  lucideCircleCheck,
+  lucideCircleX,
   lucideListChecks,
   lucideTrash2,
+  lucideGroup
+
 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
 import {
@@ -44,10 +48,12 @@ import {
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { AppointmentConfirmationDTO, AppointmentDTO } from '@shared/dtos';
-import { DecimalPipe, TitleCasePipe } from '@angular/common';
+import { CommonModule, DecimalPipe, TitleCasePipe } from '@angular/common';
+import { AppointmentConfirmationDialogRejectConfirmationComponent } from './appointment-confirmation-dialog-reject-confirmation';
+import { AppointmentConfirmationDialogAcceptConfirmationComponent } from "./appointment-confirmation-dialog-accept-confirmation";
 
 // TODO provide more information about the user
-type RowData = {
+export type Row = {
   appointment: AppointmentDTO;
   userId: number;
 };
@@ -65,7 +71,6 @@ type RowData = {
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
-    HlmAlertDialogComponent,
     FormsModule,
     BrnMenuTriggerDirective,
     HlmMenuModule,
@@ -77,25 +82,31 @@ type RowData = {
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
-  ],
+    CommonModule,
+    AppointmentConfirmationDialogRejectConfirmationComponent,
+    AppointmentConfirmationDialogAcceptConfirmationComponent,
+],
   providers: [
     provideIcons({
       lucideChevronDown,
       lucideTrash2,
       lucideArrowUpDown,
       lucideListChecks,
+      lucideCircleCheck,
+      lucideCircleX,
+      lucideGroup
     }),
   ],
   templateUrl: './appointment-confirmation-data-table.html',
 })
 export class AppointmentConfirmationDataTableComponent {
-  private readonly _data = signal<RowData[]>([]);
+  private readonly _data = signal<Row[]>([]);
 
   @Input() set data(newData: AppointmentConfirmationDTO[]) {
     if (!newData || !Array.isArray(newData)) return;
 
     // Flatten the data into Row objects that include appointment and userId
-    const allRows: RowData[] = newData.flatMap((reqDto) =>
+    const allRows: Row[] = newData.flatMap((reqDto) =>
       reqDto.appointments.map((appointment) => ({
         appointment,
         userId: reqDto.userId,
@@ -103,7 +114,7 @@ export class AppointmentConfirmationDataTableComponent {
     );
 
     // Save selected requests before updating the data
-    const selectedRequests = this.getSelectedAppointments();
+    const selectedRequests = this._selected();
 
     // Sort the data by date, time, and location
     this.updateAppointmentsWithSorting(allRows);
@@ -122,7 +133,7 @@ export class AppointmentConfirmationDataTableComponent {
     });
   }
 
-  private updateAppointmentsWithSorting(newData: RowData[]) {
+  private updateAppointmentsWithSorting(newData: Row[]) {
     const sortedRows = newData.sort((rowA, rowB) => {
       // Compare by date
       const dateComparison =
@@ -165,8 +176,8 @@ export class AppointmentConfirmationDataTableComponent {
   protected readonly _availablePageSizes = [5, 10, 20, 10000];
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
-  private readonly _selectionModel = new SelectionModel<RowData>(true);
-  protected readonly _isRowSelected = (row: RowData) =>
+  private readonly _selectionModel = new SelectionModel<Row>(true);
+  protected readonly _isRowSelected = (row: Row) =>
     this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(
     this._selectionModel.changed.pipe(map((change) => change.source.selected)),
@@ -231,7 +242,7 @@ export class AppointmentConfirmationDataTableComponent {
     });
   }
 
-  protected toggleRow(row: RowData) {
+  protected toggleRow(row: Row) {
     this._selectionModel.toggle(row);
     if (this._isRowSelected(row)) {
       this._retainSelectedUserRequest(row);
@@ -240,40 +251,60 @@ export class AppointmentConfirmationDataTableComponent {
     }
   }
 
-  private readonly hiddenUserRequests: Map<number, RowData[]> = new Map();
+  private readonly hiddenUserRows: Map<number, Row[]> = new Map();
 
-  private _retainSelectedUserRequest(selectedRequest: RowData) {
+  private _retainSelectedUserRequest(selectedRequest: Row) {
     const allUserRequests = this._data().filter(
       (row) => row.userId === selectedRequest.userId
     );
-    this.hiddenUserRequests.set(
+    this.hiddenUserRows.set(
       selectedRequest.userId,
       allUserRequests.filter((row) => row !== selectedRequest)
     );
     const newData = this._data().filter(
       (row) =>
-        this.hiddenUserRequests.get(selectedRequest.userId)!.indexOf(row) === -1
+        this.hiddenUserRows.get(selectedRequest.userId)!.indexOf(row) === -1
     );
     this.updateAppointmentsWithSorting(newData);
   }
 
-  private _restoreUserRequests(deselectedRequest: RowData) {
+  private _restoreUserRequests(deselectedRequest: Row) {
     const newData = this._data().concat(
-      this.hiddenUserRequests.get(deselectedRequest.userId)!
+      this.hiddenUserRows.get(deselectedRequest.userId)!
     );
-    this.hiddenUserRequests.delete(deselectedRequest.userId);
+    this.hiddenUserRows.delete(deselectedRequest.userId);
     this.updateAppointmentsWithSorting(newData);
   }
 
-  getSelectedAppointments(): RowData[] {
-    return this._selected();
+
+  private extractDTOFromAppointmentRows(rows: Row[]): AppointmentConfirmationDTO[] {
+    const data: AppointmentConfirmationDTO[] = [];
+    rows.forEach((row) => {
+      let existingUser = data.find((d) => d.userId === row.userId);
+      if (!existingUser) {
+        data.push({
+          userId: row.userId,
+          appointments: [],
+        });
+        existingUser = data[data.length - 1];
+      } 
+      existingUser.appointments.push(row.appointment);
+    });
+    return data;
   }
 
-  saveChanges() {
-    console.log('Saving changes...', this.getSelectedAppointments());
+  @Output()
+  readonly confirmationAccepted = new EventEmitter<AppointmentConfirmationDTO[]>();
+  protected onConfirmationAccepted(rows: Row[]) {
+    const data = this.extractDTOFromAppointmentRows(rows);
+    this.confirmationAccepted.emit(data);
   }
 
-  deleteSelectedAppointments() {
-    console.log('Deleting appointments...', this.getSelectedAppointments());
+  @Output()
+  readonly confirmationRejected = new EventEmitter<AppointmentConfirmationDTO[]>();
+  protected onConfirmationRejected(rows: Row[]) {
+    const data = this.extractDTOFromAppointmentRows(rows);
+    this.confirmationRejected.emit(data);
   }
+
 }

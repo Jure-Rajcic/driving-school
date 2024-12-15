@@ -7,6 +7,7 @@ import {
   lucideBrainCircuit,
   lucideChevronDown,
   lucideListChecks,
+  lucideRefreshCcw,
   lucideTrash2,
 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
@@ -43,17 +44,13 @@ import {
   HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { AppointmentConfirmationDTO, AppointmentDTO } from '@shared/dtos';
+import { ClientDTO } from '@shared/dtos';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 
 // TODO provide more information about the user
-type RowData = {
-  appointment: AppointmentDTO;
-  userId: number;
-};
 
 @Component({
-  selector: 'appointment-confirmation-data-table',
+  selector: 'appointment-result-data-table',
   standalone: true,
   imports: [
     FormsModule,
@@ -81,7 +78,7 @@ type RowData = {
   providers: [
     provideIcons({
       lucideChevronDown,
-      lucideTrash2,
+      lucideRefreshCcw,
       lucideArrowUpDown,
       lucideListChecks,
     }),
@@ -89,24 +86,17 @@ type RowData = {
   templateUrl: './appointment-results-data-table.html',
 })
 export class AppointmentResultsDataTableComponent {
-  private readonly _data = signal<RowData[]>([]);
+  private readonly _data = signal<ClientDTO[]>([]);
 
-  @Input() set data(newData: AppointmentConfirmationDTO[]) {
+  @Input() set data(newData: ClientDTO[]) {
     if (!newData || !Array.isArray(newData)) return;
 
-    // Flatten the data into Row objects that include appointment and userId
-    const allRows: RowData[] = newData.flatMap((reqDto) =>
-      reqDto.appointments.map((appointment) => ({
-        appointment,
-        userId: reqDto.userId,
-      }))
-    );
 
     // Save selected requests before updating the data
-    const selectedRequests = this.getSelectedAppointments();
+    const selectedRequests = this.getSelectedClients();
 
     // Sort the data by date, time, and location
-    this.updateAppointmentsWithSorting(allRows);
+    this.updateClientsWithSorting(newData);
 
     // Restore the selected requests
     while (this._selected().length > 0)
@@ -122,23 +112,18 @@ export class AppointmentResultsDataTableComponent {
     });
   }
 
-  private updateAppointmentsWithSorting(newData: RowData[]) {
-    const sortedRows = newData.sort((rowA, rowB) => {
-      // Compare by date
-      const dateComparison =
-        new Date(rowA.appointment.date).getTime() -
-        new Date(rowB.appointment.date).getTime();
-      if (dateComparison !== 0) return dateComparison;
+  private updateClientsWithSorting(newData: ClientDTO[]) {
+    const sortedRows = newData.sort((c1, c2) => {
+      // Compare by name 
+      const nameComparison = c1.name.localeCompare(c2.name);
+      if (nameComparison !== 0) return nameComparison;
 
-      // Compare by time if dates are equal
-      const timeComparison = this._compareTimes(
-        rowA.appointment.time,
-        rowB.appointment.time
-      );
-      if (timeComparison !== 0) return timeComparison;
+      // Compare by surname
+      const surnameComparison = c1.surname.localeCompare(c2.surname);
+      if (surnameComparison !== 0) return surnameComparison;
 
-      // Compare by location if time is also equal
-      return rowA.appointment.location.localeCompare(rowB.appointment.location);
+      const idComparison = c1.id - c2.id;
+      return idComparison;
     });
 
     this._data.set(newData);
@@ -156,7 +141,7 @@ export class AppointmentResultsDataTableComponent {
   }
 
   protected readonly _rawFilterInput = signal('');
-  protected readonly _appointmentFilter = signal('');
+  protected readonly _clientFilter = signal('');
   private readonly _debouncedFilter = toSignal(
     toObservable(this._rawFilterInput).pipe(debounceTime(300))
   );
@@ -165,8 +150,8 @@ export class AppointmentResultsDataTableComponent {
   protected readonly _availablePageSizes = [5, 10, 20, 10000];
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
-  private readonly _selectionModel = new SelectionModel<RowData>(true);
-  protected readonly _isRowSelected = (row: RowData) =>
+  private readonly _selectionModel = new SelectionModel<ClientDTO>(true);
+  protected readonly _isRowSelected = (row: ClientDTO) =>
     this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(
     this._selectionModel.changed.pipe(map((change) => change.source.selected)),
@@ -176,8 +161,7 @@ export class AppointmentResultsDataTableComponent {
   );
 
   protected readonly _brnColumnManager = useBrnColumnManager({
-    appointment: { visible: true, label: 'Appointment' },
-    user: { visible: true, label: 'User' },
+    client: { visible: true, label: 'Client' },
   });
   protected readonly _allDisplayedColumns = computed(() => [
     'select',
@@ -186,18 +170,16 @@ export class AppointmentResultsDataTableComponent {
   ]);
 
   private readonly _filteredData = computed(() => {
-    const appointmentFilter = this._appointmentFilter()?.trim()?.toLowerCase();
-    if (appointmentFilter && appointmentFilter.length > 0) {
+    const clientFilter = this._clientFilter()?.trim()?.toLowerCase();
+    if (clientFilter && clientFilter.length > 0) {
       return this._data().filter((u) =>
         (
-          u.appointment.date +
+          u.name +
           ' ' +
-          u.appointment.time +
-          ' ' +
-          u.appointment.location
+          u.surname
         )
           .toLowerCase()
-          .includes(appointmentFilter)
+          .includes(clientFilter)
       );
     }
     return this._data();
@@ -226,12 +208,12 @@ export class AppointmentResultsDataTableComponent {
   constructor() {
     // needed to sync the debounced filter to the name filter, but being able to override the
     // filter when loading new users without debounce
-    effect(() => this._appointmentFilter.set(this._debouncedFilter() ?? ''), {
+    effect(() => this._clientFilter.set(this._debouncedFilter() ?? ''), {
       allowSignalWrites: true,
     });
   }
 
-  protected toggleRow(row: RowData) {
+  protected toggleRow(row: ClientDTO) {
     this._selectionModel.toggle(row);
     if (this._isRowSelected(row)) {
       this._retainSelectedUserRequest(row);
@@ -240,40 +222,40 @@ export class AppointmentResultsDataTableComponent {
     }
   }
 
-  private readonly hiddenUserRequests: Map<number, RowData[]> = new Map();
+  private readonly hiddenUserRequests: Map<number, ClientDTO[]> = new Map();
 
-  private _retainSelectedUserRequest(selectedRequest: RowData) {
+  private _retainSelectedUserRequest(selectedClient: ClientDTO) {
     const allUserRequests = this._data().filter(
-      (row) => row.userId === selectedRequest.userId
+      (client) => client.id === selectedClient.id
     );
     this.hiddenUserRequests.set(
-      selectedRequest.userId,
-      allUserRequests.filter((row) => row !== selectedRequest)
+      selectedClient.id,
+      allUserRequests.filter((row) => row !== selectedClient)
     );
     const newData = this._data().filter(
       (row) =>
-        this.hiddenUserRequests.get(selectedRequest.userId)!.indexOf(row) === -1
+        this.hiddenUserRequests.get(selectedClient.id)!.indexOf(row) === -1
     );
-    this.updateAppointmentsWithSorting(newData);
+    this.updateClientsWithSorting(newData);
   }
 
-  private _restoreUserRequests(deselectedRequest: RowData) {
+  private _restoreUserRequests(deselectedRequest: ClientDTO) {
     const newData = this._data().concat(
-      this.hiddenUserRequests.get(deselectedRequest.userId)!
+      this.hiddenUserRequests.get(deselectedRequest.id)!
     );
-    this.hiddenUserRequests.delete(deselectedRequest.userId);
-    this.updateAppointmentsWithSorting(newData);
+    this.hiddenUserRequests.delete(deselectedRequest.id);
+    this.updateClientsWithSorting(newData);
   }
 
-  getSelectedAppointments(): RowData[] {
+  getSelectedClients(): ClientDTO[] {
     return this._selected();
   }
 
   saveChanges() {
-    console.log('Saving changes...', this.getSelectedAppointments());
+    console.log('Saving changes...', this.getSelectedClients());
   }
 
-  deleteSelectedAppointments() {
-    console.log('Deleting appointments...', this.getSelectedAppointments());
+  deleteSelectedClients() {
+    console.log('Deleting clients...', this.getSelectedClients());
   }
 }

@@ -27,7 +27,6 @@ import { AppointmentDialogRequestAppointmentsComponent } from './appointment-dia
   standalone: true,
   imports: [
     FormsModule,
-    BrnMenuTriggerDirective,
     HlmMenuModule,
     BrnTableModule,
     HlmTableModule,

@@ -6,5 +6,5 @@
     "update:shared": "tsc && yalc publish && cd ../frontend && yalc add @shared/dtos && cd ../backend && yalc add @shared/dtos",
     "help": "echo 'If experiencing problems, update package.json version and run npm run update:shared'"
   },
-  "yalcSig": "88dc96d5cdfaf6d418caa76db18c5820"
+  "yalcSig": "b02da1c88c8a3d105c8aa651caeb6cf1"
 }

@@ -22,7 +22,8 @@ export class AppointmentManagementService {
 
     public deleteAppointment(appointment: AppointmentDTO) {
         console.log('Deleting appointment:', appointment);
-        this.appointments.set(this.appointments().filter(a => a.id !== appointment.id));
+        console.log('Appointments:', this.appointments());  
+        this.appointments.set(this.appointments().filter(a => JSON.stringify(a) !== JSON.stringify(appointment)));
     }
 
     private handleAdminAddedAppointment(data: AppointmentDTO): void {

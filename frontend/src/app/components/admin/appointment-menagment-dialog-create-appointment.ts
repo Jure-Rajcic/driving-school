@@ -21,8 +21,14 @@ import {
   BrnAlertDialogTriggerDirective,
 } from '@spartan-ng/ui-alertdialog-brain';
 import {
+  HlmAlertDialogActionButtonDirective,
+  HlmAlertDialogCancelButtonDirective,
   HlmAlertDialogComponent,
   HlmAlertDialogContentComponent,
+  HlmAlertDialogDescriptionDirective,
+  HlmAlertDialogFooterComponent,
+  HlmAlertDialogHeaderComponent,
+  HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
 import { signal } from '@angular/core';
 import { lucideCheck, lucideChevronDown } from '@ng-icons/lucide';
@@ -97,6 +103,13 @@ enum PopoverStateEnum {
     HlmButtonDirective,
     HlmAlertDialogContentComponent,
     FormsModule,
+    BrnAlertDialogTriggerDirective,
+    BrnAlertDialogContentDirective,
+
+    HlmAlertDialogComponent,
+    HlmAlertDialogContentComponent,
+    HlmButtonDirective,
+    HlmIconComponent,
   ],
   providers: [provideIcons({ lucidePlus, lucideCheck, lucideChevronDown })],
   templateUrl: './appointment-menagment-dialog-create-appointment.html',

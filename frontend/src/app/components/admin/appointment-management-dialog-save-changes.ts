@@ -1,15 +1,7 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  Signal,
-  signal,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
 import { lucideTrash2 } from '@ng-icons/lucide';
-import { AppointmentDTO } from '@shared/dtos';
 import {
   BrnAlertDialogContentDirective,
   BrnAlertDialogTriggerDirective,
@@ -22,12 +14,9 @@ import {
   HlmAlertDialogDescriptionDirective,
   HlmAlertDialogFooterComponent,
   HlmAlertDialogHeaderComponent,
-  HlmAlertDialogOverlayDirective,
   HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
-import { HlmTooltipComponent, HlmTooltipTriggerDirective } from '@spartan-ng/ui-tooltip-helm';
 
 @Component({
   selector: 'appointment-management-dialog-save-changes',
@@ -51,23 +40,27 @@ import { HlmTooltipComponent, HlmTooltipTriggerDirective } from '@spartan-ng/ui-
   ],
 })
 export class AppointmentManagementDialogSaveChangesComponent {
-  @Input({ required: true })
-  public locallyDeletedAppointments: AppointmentDTO[] | undefined;
+  protected _nCreated = signal(0);
+  @Input() set nCreated(value: number) {
+    this._nCreated.set(value);
+    console.log('nCreated', value);
+  }
 
-  @Input({ required: true })
-  public locallyCreatedAppointments: AppointmentDTO[] | undefined;
+  protected _nDeleted = signal(0);
+  @Input() set nDeleted(value: number) {
+    this._nDeleted.set(value);
+    console.log('nDeleted', value);
+  }
 
-  @Input({ required: true })
-  public IsSaveChangesEnabled: boolean | undefined;
-
-  @Output() private readonly onSaveChanges = new EventEmitter<any>();
+  @Output()
+  protected readonly saveChanges = new EventEmitter<undefined>();
 
   public trySavingAppointmentManagementChanges(): boolean {
-    if (!this.IsSaveChangesEnabled) {
+    if (!this._nCreated() && !this._nDeleted()) {
       alert('No changes to save');
       return false;
     } else {
-      this.onSaveChanges.emit({});
+      this.saveChanges.emit();
       return true;
     }
   }

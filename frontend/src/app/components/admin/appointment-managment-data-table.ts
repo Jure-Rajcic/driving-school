@@ -16,10 +16,7 @@ import {
   lucideTrash2,
 } from '@ng-icons/lucide';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
-import {
-  HlmCheckboxCheckIconComponent,
-  HlmCheckboxComponent,
-} from '@spartan-ng/ui-checkbox-helm';
+import { HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { BrnMenuTriggerDirective } from '@spartan-ng/ui-menu-brain';
@@ -33,26 +30,16 @@ import { HlmTableModule } from '@spartan-ng/ui-table-helm';
 import { BrnSelectModule } from '@spartan-ng/ui-select-brain';
 import { HlmSelectModule } from '@spartan-ng/ui-select-helm';
 import { debounceTime, map } from 'rxjs';
-import { toast } from 'ngx-sonner';
-import {
-  BrnAlertDialogContentDirective,
-  BrnAlertDialogTriggerDirective,
-} from '@spartan-ng/ui-alertdialog-brain';
-import {
-  HlmAlertDialogActionButtonDirective,
-  HlmAlertDialogCancelButtonDirective,
-  HlmAlertDialogComponent,
-  HlmAlertDialogContentComponent,
-  HlmAlertDialogDescriptionDirective,
-  HlmAlertDialogFooterComponent,
-  HlmAlertDialogHeaderComponent,
-  HlmAlertDialogTitleDirective,
-} from '@spartan-ng/ui-alertdialog-helm';
-import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+
 import { AppointmentDTO } from '@shared/dtos';
-import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { AppointmentMenagmentDialogCreateAppointmentComponent } from './appointment-menagment-dialog-create-appointment';
 import { AppointmentMenagmentDialogDeleteAppointmentComponent } from './appointment-menagment-dialog-delete-appointment';
+import { AppointmentManagementDialogSaveChangesComponent } from './appointment-management-dialog-save-changes';
+
+export type AppointmentChanges = {
+  createdAppointments: AppointmentDTO[];
+  deletedAppointments: AppointmentDTO[];
+};
 
 @Component({
   selector: 'appointment-menagment-data-table',
@@ -80,6 +67,7 @@ import { AppointmentMenagmentDialogDeleteAppointmentComponent } from './appointm
     HlmSelectModule,
     AppointmentMenagmentDialogCreateAppointmentComponent,
     AppointmentMenagmentDialogDeleteAppointmentComponent,
+    AppointmentManagementDialogSaveChangesComponent,
   ],
   providers: [
     provideIcons({ lucideChevronDown, lucideTrash2, lucideArrowUpDown }),
@@ -94,7 +82,7 @@ export class AppointmentManagmentDataTableComponent {
     this.updateAppointmentsWithSorting(newData);
 
     // Remove deleted appointments from the data
-    this.deletedAppointments.forEach((deleted) => {
+    this.locallyDeletedAppointments().forEach((deleted) => {
       const index = this._data().findIndex((a) => a === deleted);
       if (index !== -1) {
         this._data().splice(index, 1);
@@ -144,7 +132,7 @@ export class AppointmentManagmentDataTableComponent {
   protected readonly _pageSize = signal(this._availablePageSizes[0]);
 
   private readonly _selectionModel = new SelectionModel<AppointmentDTO>(true);
-  protected readonly _isPaymentSelected = (row: AppointmentDTO) =>
+  protected readonly _isRowSelected = (row: AppointmentDTO) =>
     this._selectionModel.isSelected(row);
   protected readonly _selected = toSignal(
     this._selectionModel.changed.pipe(map((change) => change.source.selected)),
@@ -236,29 +224,86 @@ export class AppointmentManagmentDataTableComponent {
     return this._selected();
   }
 
-
-  @Output()
-  readonly onAppointmentCreatedLocally = new EventEmitter<AppointmentDTO>();
+  protected locallyCreatedAppointments = signal<AppointmentDTO[]>([]);
 
   public onAppointmentCreated(appointment: AppointmentDTO) {
     const newAppointments = [...this._data(), appointment];
     this.updateAppointmentsWithSorting(newAppointments);
-    this.onAppointmentCreatedLocally.emit(appointment);
+    this.updateLocallyCreatedAppointments(appointment);
   }
 
-  private readonly deletedAppointments: AppointmentDTO[] = [];
-
-  public deleteAppointment(appointment: AppointmentDTO) {
-    const newAppointments = this._data().filter((a) => a !== appointment);
-    this.deletedAppointments.push(appointment);
-    if (this._selectionModel.isSelected(appointment)) this._selectionModel.deselect(appointment);
-    this.updateAppointmentsWithSorting(newAppointments);
+  protected updateLocallyCreatedAppointments(appointment: AppointmentDTO) {
+    const newLocallyCreatedAppointments = [
+      ...this.locallyCreatedAppointments(),
+      appointment,
+    ];
+    this.updateLocallyAffectedAppointments(
+      newLocallyCreatedAppointments,
+      undefined
+    );
   }
-  @Output()
-  readonly onAppointmentsDeletedLocally = new EventEmitter<AppointmentDTO[]>();
+
+  protected locallyDeletedAppointments = signal<AppointmentDTO[]>([]);
 
   public onAppointmentsDeleted(appointments: AppointmentDTO[]) {
     appointments.forEach((appointment) => this.deleteAppointment(appointment));
-    this.onAppointmentsDeletedLocally.emit(appointments);
+  }
+
+  public deleteAppointment(appointment: AppointmentDTO) {
+    this.updateLocallyDeletedAppointments([appointment]);
+
+    const newAppointments = this._data().filter((a) => a !== appointment);
+    if (this._selectionModel.isSelected(appointment))
+      this._selectionModel.deselect(appointment);
+    this.updateAppointmentsWithSorting(newAppointments);
+  }
+
+  protected updateLocallyDeletedAppointments(appointments: AppointmentDTO[]) {
+    const newLocallyDeletedAppointments = [
+      ...this.locallyDeletedAppointments(),
+      ...appointments,
+    ];
+    this.updateLocallyAffectedAppointments(
+      undefined,
+      newLocallyDeletedAppointments
+    );
+  }
+
+  private updateLocallyAffectedAppointments(
+    newLocallyCreatedAppointments: AppointmentDTO[] | undefined,
+    newLocallyDeletedAppointments: AppointmentDTO[] | undefined
+  ) {
+    if (!newLocallyCreatedAppointments && !newLocallyDeletedAppointments)
+      return;
+    if (newLocallyCreatedAppointments)
+      this.locallyCreatedAppointments.set(newLocallyCreatedAppointments);
+    if (newLocallyDeletedAppointments)
+      this.locallyDeletedAppointments.set(newLocallyDeletedAppointments);
+
+    const intersection = this.locallyCreatedAppointments().filter(
+      (appointment) =>
+        this.locallyDeletedAppointments().some((a) => a.id === appointment.id)
+    );
+    intersection.forEach((appointment) => {
+      this.locallyCreatedAppointments.set(
+        this.locallyCreatedAppointments().filter((a) => a.id !== appointment.id)
+      );
+      this.locallyDeletedAppointments.set(
+        this.locallyDeletedAppointments().filter((a) => a.id !== appointment.id)
+      );
+    });
+  }
+
+  @Output() readonly saveChanges = new EventEmitter<AppointmentChanges>();
+  protected onSaveChanges() {
+    this.saveChanges.emit({
+      createdAppointments: this.locallyCreatedAppointments(),
+      deletedAppointments: this.locallyDeletedAppointments(),
+    });
+    this.locallyCreatedAppointments().forEach(a => this._selectionModel.deselect(a));
+    this.locallyCreatedAppointments.set([]);
+    this.locallyDeletedAppointments().forEach(a => this._selectionModel.deselect(a));
+    this.locallyDeletedAppointments.set([]);
+
   }
 }

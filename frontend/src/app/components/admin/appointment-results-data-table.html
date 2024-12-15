@@ -3,8 +3,8 @@
     <input
       hlmInput
       class="w-full md:w-80"
-      placeholder="Filter appointments..."
-      [ngModel]="_appointmentFilter()"
+      placeholder="Filter clients..."
+      [ngModel]="_clientFilter()"
       (ngModelChange)="_rawFilterInput.set($event)"
     />
     <button hlmBtn variant="outline" [brnMenuTriggerFor]="menu">
@@ -49,11 +49,10 @@
       </hlm-td>
     </brn-column-def>
 
-    <brn-column-def name="appointment" class="flex-1">
-      <hlm-th truncate *brnHeaderDef>Appointment</hlm-th>
-      <hlm-td truncate *brnCellDef="let element">
-        {{ element.appointment.date }} {{ element.appointment.time }} {{
-        element.appointment.location }}
+    <brn-column-def name="client" class="flex-1">
+      <hlm-th truncate *brnHeaderDef>Client</hlm-th>
+      <hlm-td truncate *brnCellDef="let client">
+        {{ client.name }} {{ client.surname }} 
       </hlm-td>
     </brn-column-def>
 
@@ -74,7 +73,7 @@
           >
             <hlm-icon
               class="w-4 h-4"
-              name="lucideTrash2"
+              name="lucideRefreshCcw"
               class="text-red-500"
             />
           </button>

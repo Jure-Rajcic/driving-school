@@ -1,3 +1,4 @@
+import { ClientDTO } from "./client.dto";
 
 export interface AppointmentDTO {
     id: number;
@@ -11,7 +12,8 @@ export interface AppointmentConfirmationDTO {
     userId: number;
 }
 
-export interface AcessToPsychologicalExaminationDTO {
-    userId: number;
+export interface AppointmentsResultsDTO {
+    client: ClientDTO;
     granted: boolean;
 }
+

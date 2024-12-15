@@ -11,8 +11,10 @@ export declare const MEDICAL_EXAMINATION_USER_REQUESTED_APPOINTMENTS: string;
 export declare const MEDICAL_EXAMINATION_ADMIN_RECIVED_USER_REQUESTED_APPOINTMENTS: string;
 export declare const MEDICAL_EXAMINATION_ADMIN_CONFIRMED_ONE_OF_USER_REQUESTED_APPOINTMENTS: string;
 export declare const MEDICAL_EXAMINATION_ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS: string;
+export declare const ADMIN_REQUESTED_CLIENT_RESULTS = "admin-requested-client-results";
 export declare const ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION = "admin-granted-access-to-psychological-examination";
 export declare const ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION = "admin-denied-access-to-psychological-examination";
+export declare const MEDICAL_EXAMINATION_ADMIN_REQUESTED_CLIENT_RESULTS: string;
 export declare const MEDICAL_EXAMINATION_ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION: string;
 export declare const MEDICAL_EXAMINATION_ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION: string;
 //# sourceMappingURL=1-medical-examination.d.ts.map

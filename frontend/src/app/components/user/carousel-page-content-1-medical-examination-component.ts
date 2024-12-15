@@ -59,15 +59,22 @@ export class MedicalExaminationContentComponent {
     }, 1000);
   }
 
-  // simulateClientSendAppointmentConfirmationReq() {
-
-  //   const dummy2: AppointmentConfirmationDTO = {
-  //     appointments: [
-  //       { id:4, date: '2021-01-01', time: '12:00', location: 'New York'},
-  //       { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'},
-  //     ],
-  //     userId: 1
-  //   }
-  //   this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_USER_REQUESTED_APPOINTMENTS, dummy2)
-  // }
+  simulateClientSendAppointmentConfirmationReq() {
+    const dummy: AppointmentConfirmationDTO = {
+      appointments: [
+        { id: 1, date: '2021-01-01', time: '12:00', location: 'New York' },
+        { id: 2, date: '2021-01-01', time: '14:00', location: 'Chicago' },
+      ],
+      userId: 1,
+    };
+    const dummy2: AppointmentConfirmationDTO = {
+      appointments: [
+        { id:4, date: '2021-01-01', time: '12:00', location: 'New York'},
+        { id:5, date: '2021-01-01', time: '14:00', location: 'Chicago'},
+      ],
+      userId: 2
+    }
+    this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_USER_REQUESTED_APPOINTMENTS, dummy)
+    this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_USER_REQUESTED_APPOINTMENTS, dummy2)
+  }
 }

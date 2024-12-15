@@ -6,7 +6,7 @@
       <button hlmTabsTrigger="confirm-appointments">
         Confirm Appointments
       </button>
-      <button hlmTabsTrigger="unlock-next-step">Unlock Next Step</button>
+      <button hlmTabsTrigger="unlock-next-step">Appointments Results</button>
     </hlm-tabs-list>
 
     <div hlmTabsContent="manage-appointments">
@@ -24,18 +24,9 @@
         <p hlmCardContent>
           <appointment-menagment-data-table
             [data]="appointments()"
-            (onAppointmentCreatedLocally)="onAppointmentCreatedLocally($event)"
-            (onAppointmentsDeletedLocally)="onAppointmentsDeletedLocally($event)"
+            (saveChanges)="onSaveChanges($event)"
           ></appointment-menagment-data-table>
         </p>
-        <div hlmCardFooter class="justify-end">
-          <appointment-management-dialog-save-changes
-            [locallyDeletedAppointments]="locallyDeletedAppointments"
-            [locallyCreatedAppointments]="locallyCreatedAppointments"
-            [IsSaveChangesEnabled]="IsSaveChangesEnabled()"
-            (onSaveChanges)="onSaveChanges($event)"
-          ></appointment-management-dialog-save-changes>
-        </div>
       </section>
     </div>
 
@@ -53,6 +44,8 @@
         <p hlmCardContent>
           <appointment-confirmation-data-table
             [data]="appointmentConfirmationRequests()"
+            (confirmationAccepted)="onConfirmationAccepted($event)"
+            (confirmationRejected)="onConfirmationRejected($event)"
           ></appointment-confirmation-data-table>
         </p>
       </section>
@@ -70,25 +63,17 @@
           </p>
         </div>
         <p hlmCardContent>
-          <appointment-menagment-data-table
-            [data]="appointments()"
-          ></appointment-menagment-data-table>
+          <appointment-result-data-table
+            [data]="appointmentResults()"
+          ></appointment-result-data-table>
         </p>
-        <div hlmCardFooter>
-          <button hlmBtn>Save Changes</button>
-        </div>
       </section>
     </div>
   </hlm-tabs>
 </div>
 
 <div class="flex flex-col gap-2 p-2 bg-blue-100">
-  <button (click)="simulateAdminAddedAppointment()">
-    Simulate Admin Added Appointment
-  </button>
-  <button (click)="simulateAdminDeletedAppointment()">
-    Simulate Admin Deleted Appointment
-  </button>
+
   <!-- 
   <button (click)="simulateAdminConfirmedAppointment()">
     Simulate Admin Confirmed Appointment

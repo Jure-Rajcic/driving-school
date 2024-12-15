@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { provideIcons } from '@ng-icons/core';
-import { lucideTrash2 } from '@ng-icons/lucide';
+import { lucideCircleX } from '@ng-icons/lucide';
 import { AppointmentDTO } from '@shared/dtos';
 import {
   BrnAlertDialogContentDirective,
@@ -29,7 +29,7 @@ enum AppointmentDeletionMode {
   selector: 'appointment-menagment-dialog-delete-appointment',
   standalone: true,
   templateUrl: './appointment-menagment-dialog-delete-appointment.html',
-  providers: [provideIcons({ lucideTrash2 })],
+  providers: [provideIcons({ lucideCircleX })],
   imports: [
     BrnAlertDialogTriggerDirective,
     BrnAlertDialogContentDirective,

@@ -6,16 +6,13 @@
     <hlm-alert-dialog-header>
       <h3 hlmAlertDialogTitle>{{ title() }}</h3>
       <p hlmAlertDialogDescription>
-        Are you absolutly sure you want to proceed? Data will be removed localy and can be retrived by 
-        refreshing the page, until you save the changes.
+        Are you absolutly sure you want to proceed? You cannot undo this action
+        afterwards.
       </p>
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button
-        hlmAlertDialogAction
-        (click)="tryDeleteAppointmentLoccaly() && ctx.close()"
-      >
+      <button hlmAlertDialogAction (click)="tryRejectingRow() && ctx.close()">
         Delete
       </button>
     </hlm-alert-dialog-footer>

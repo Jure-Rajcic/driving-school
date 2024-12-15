@@ -62,23 +62,23 @@
       <hlm-td truncate *brnCellDef="let element"> {{ element.userId }} </hlm-td>
     </brn-column-def>
 
-    <brn-column-def name="actions" class="w-16">
+    <brn-column-def name="actions" class="w-24">
       <hlm-th *brnHeaderDef></hlm-th>
       <hlm-td *brnCellDef="let element">
-        <hlm-alert-dialog>
-          <button
-            hlmBtn
-            variant="ghost"
-            brnAlertDialogTrigger
-            class="h-6 w-6 p-0"
-          >
-            <hlm-icon
-              class="w-4 h-4"
-              name="lucideTrash2"
-              class="text-red-500"
-            />
-          </button>
-        </hlm-alert-dialog>
+          <div class="flex flex-row gap-2" *ngIf="_isRowSelected(element)">
+            
+            <appointment-confirmation-dialog-accept-confirmation
+              [clickedRow]="element"
+              [selectedRows]="this._selected()"
+              (confirmationAccepted)="onConfirmationAccepted($event)"
+            ></appointment-confirmation-dialog-accept-confirmation>
+            
+            <appointment-confirmation-dialog-reject-confirmation
+              [clickedRow]="element"
+              [selectedRows]="this._selected()"
+              (confirmationRejected)="onConfirmationRejected($event)"
+            ></appointment-confirmation-dialog-reject-confirmation>
+          </div>
       </hlm-td>
     </brn-column-def>
 
@@ -97,6 +97,5 @@
     <span class="text-sm text-muted-foreground text-sm"
       >{{ _selected().length }} of {{ _totalElements() }} row(s) selected</span
     >
-    <button hlmBtn (click)="saveChanges()">Save Changes</button>
   </div>
 </div>
