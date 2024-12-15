@@ -57,7 +57,14 @@ export class AdminMedicalExaminationService {
     private handleAdminConfirmedOneOfUserRequestedAppointments(data: AppointmentConfirmationDTO): void {
         console.log('Admin confirmed one of user requested appointments, removing confirmed users', data);
         this.appointmentConfirmationRequests.set(this.appointmentConfirmationRequests().filter(a => a.userId !== data.userId));
-        this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_REQUESTED_CLIENT_RESULTS, data);
+
+        // TODO actually put CLIENT DOT IN REQUESTS or FETCH IT FROM BACKEND
+        const dataToSend: ClientDTO = {
+            id: data.userId,
+            name: 'Jure',
+            surname: 'Rajcic',
+        }
+        this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_REQUESTED_CLIENT_RESULTS, dataToSend);
     }
 
     private handelAdminRejectedAllOfUserRequestedAppointments(data: AppointmentConfirmationDTO): void {
@@ -73,5 +80,6 @@ export class AdminMedicalExaminationService {
         console.log('Admin requested client results', data);
         this.appointmentResults.set([...this.appointmentResults(), data]);
     }
+
 
 }

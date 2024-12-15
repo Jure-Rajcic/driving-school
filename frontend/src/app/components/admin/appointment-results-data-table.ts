@@ -1,5 +1,13 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, computed, effect, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+  effect,
+  signal,
+} from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
@@ -45,7 +53,9 @@ import {
 } from '@spartan-ng/ui-alertdialog-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { ClientDTO } from '@shared/dtos';
-import { DecimalPipe, TitleCasePipe } from '@angular/common';
+import { CommonModule, DecimalPipe, TitleCasePipe } from '@angular/common';
+import { AppointmentCResultDialogDenyAccessComponent } from './appointment-result-dialog-deny-access';
+import { AppointmentCResultDialogGrantAccessComponent } from './appointment-result-dialog-grant-access';
 
 // TODO provide more information about the user
 
@@ -62,7 +72,6 @@ import { DecimalPipe, TitleCasePipe } from '@angular/common';
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
-    HlmAlertDialogComponent,
     FormsModule,
     BrnMenuTriggerDirective,
     HlmMenuModule,
@@ -74,6 +83,9 @@ import { DecimalPipe, TitleCasePipe } from '@angular/common';
     HlmCheckboxComponent,
     BrnSelectModule,
     HlmSelectModule,
+    AppointmentCResultDialogGrantAccessComponent,
+    AppointmentCResultDialogDenyAccessComponent,
+    CommonModule,
   ],
   providers: [
     provideIcons({
@@ -91,9 +103,8 @@ export class AppointmentResultsDataTableComponent {
   @Input() set data(newData: ClientDTO[]) {
     if (!newData || !Array.isArray(newData)) return;
 
-
     // Save selected requests before updating the data
-    const selectedRequests = this.getSelectedClients();
+    const selectedRequests = this._selected();
 
     // Sort the data by date, time, and location
     this.updateClientsWithSorting(newData);
@@ -114,7 +125,7 @@ export class AppointmentResultsDataTableComponent {
 
   private updateClientsWithSorting(newData: ClientDTO[]) {
     const sortedRows = newData.sort((c1, c2) => {
-      // Compare by name 
+      // Compare by name
       const nameComparison = c1.name.localeCompare(c2.name);
       if (nameComparison !== 0) return nameComparison;
 
@@ -173,13 +184,7 @@ export class AppointmentResultsDataTableComponent {
     const clientFilter = this._clientFilter()?.trim()?.toLowerCase();
     if (clientFilter && clientFilter.length > 0) {
       return this._data().filter((u) =>
-        (
-          u.name +
-          ' ' +
-          u.surname
-        )
-          .toLowerCase()
-          .includes(clientFilter)
+        (u.name + ' ' + u.surname).toLowerCase().includes(clientFilter)
       );
     }
     return this._data();
@@ -247,15 +252,17 @@ export class AppointmentResultsDataTableComponent {
     this.updateClientsWithSorting(newData);
   }
 
-  getSelectedClients(): ClientDTO[] {
-    return this._selected();
+  @Output()
+  protected readonly accessGranted = new EventEmitter<ClientDTO[]>();
+  protected onAccessGranted($event: ClientDTO[]) {
+  // TODO nakon resolvanja maknit i obavjestit admine da je maknuto
+  this.accessGranted.emit($event);
   }
 
-  saveChanges() {
-    console.log('Saving changes...', this.getSelectedClients());
-  }
-
-  deleteSelectedClients() {
-    console.log('Deleting clients...', this.getSelectedClients());
+  @Output()
+  protected readonly accessDenied = new EventEmitter<ClientDTO[]>();
+  protected onAccessDenied($event: ClientDTO[]) {
+  // TODO nakon resolvanja maknit i obavjestit admine da je maknuto
+  this.accessDenied.emit($event);
   }
 }

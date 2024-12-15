@@ -1,0 +1,20 @@
+<hlm-alert-dialog>
+  <button hlmBtn variant="ghost" brnAlertDialogTrigger class="h-6 w-6 p-0">
+    <hlm-icon class="w-4 h-4" name="lucideCircleCheck" class="text-green-500" />
+  </button>
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-alert-dialog-header>
+      <h3 hlmAlertDialogTitle>{{ title() }}</h3>
+      <p hlmAlertDialogDescription>
+        Are you absolutly sure you want to proceed? You cannot undo this action
+        afterwards.
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction (click)="tryGrantingRow() && ctx.close()">
+        Grant
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

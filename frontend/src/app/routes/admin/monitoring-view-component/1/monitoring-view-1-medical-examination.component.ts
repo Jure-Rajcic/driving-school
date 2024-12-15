@@ -33,6 +33,7 @@ import {
   MEDICAL_EXAMINATION_ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION,
   MEDICAL_EXAMINATION_ADMIN_REJECTED_ALL_OF_USER_REQUESTED_APPOINTMENTS,
   MEDICAL_EXAMINATION_ADMIN_REMOVED_APPOINTMENT,
+  ClientDTO,
 } from '@shared/dtos';
 import { SocketClientService } from 'src/app/services/socket-client-service';
 import { AdminMedicalExaminationService } from 'src/app/services/admin/1-medical-examination-service';
@@ -107,26 +108,35 @@ export class MonitoringViewMedicalExaminationComponent {
 
   // **** (3) Appointment Results ****
 
-
-  simulateAdminGrantedAccesToPsychologicalExamination() {
-    const data: AppointmentsResultsDTO = {
-      client: { id: 1, name: 'John', surname: 'Doe' },
-      granted: true,
-    };
-    this.socketService.sendSocketEvent(
-      MEDICAL_EXAMINATION_ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION,
-      data
-    );
+  protected onAccessGranted(data: ClientDTO[]) {
+    data.forEach((e) => this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, e));
   }
 
-  simulateAdminDeniedAccesToPsychologicalExamination() {
-    const data: AppointmentsResultsDTO = {
-      client: { id: 1, name: 'John', surname: 'Doe' },
-      granted: true,
-    };
-    this.socketService.sendSocketEvent(
-      MEDICAL_EXAMINATION_ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION,
-      data
-    );
+  protected onAccessDenied(data: ClientDTO[]) {
+    data.forEach((e) => this.socketService.sendSocketEvent(MEDICAL_EXAMINATION_ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION, e));
   }
+
+
+
+  // simulateAdminGrantedAccesToPsychologicalExamination() {
+  //   const data: AppointmentsResultsDTO = {
+  //     client: { id: 1, name: 'John', surname: 'Doe' },
+  //     granted: true,
+  //   };
+  //   this.socketService.sendSocketEvent(
+  //     MEDICAL_EXAMINATION_ADMIN_GRANTED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION,
+  //     data
+  //   );
+  // }
+
+  // simulateAdminDeniedAccesToPsychologicalExamination() {
+  //   const data: AppointmentsResultsDTO = {
+  //     client: { id: 1, name: 'John', surname: 'Doe' },
+  //     granted: true,
+  //   };
+  //   this.socketService.sendSocketEvent(
+  //     MEDICAL_EXAMINATION_ADMIN_DENIED_ACCESS_TO_PSYCHOLOGICAL_EXAMINATION,
+  //     data
+  //   );
+  // }
 }

@@ -65,6 +65,8 @@
         <p hlmCardContent>
           <appointment-result-data-table
             [data]="appointmentResults()"
+            (accessGranted)="onAccessGranted($event)"
+            (accessDenied)="onAccessDenied($event)"
           ></appointment-result-data-table>
         </p>
       </section>
